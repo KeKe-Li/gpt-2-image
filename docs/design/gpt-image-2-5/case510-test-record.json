@@ -1,0 +1,44 @@
+{
+  "caseId": 510,
+  "date": "2026-09-09",
+  "source": "https://x.com/iamaiistudio/status/2071923809788285125",
+  "sourceImage": "data/images/case510.jpg",
+  "sourceGenerationParametersVerified": false,
+  "inputPromptPath": "docs/design/gpt-image-2-5/case510-test-input.json",
+  "promptModified": false,
+  "referenceImages": [],
+  "sampleCount": 1,
+  "tool": "image_gen.imagegen",
+  "userStatedModel": "GPT Image 2.5",
+  "toolReportedModel": null,
+  "toolReportedQuality": null,
+  "toolReportedCost": null,
+  "startedAt": "2026-09-09T02:04:06.606Z",
+  "finishedAt": "2026-09-09T02:06:42.762Z",
+  "approximateCallWallClockSeconds": 156,
+  "durationNote": "Wall-clock wait includes orchestration, queueing and transfer; not an isolated inference benchmark.",
+  "outputImage": "src/assets/image25-case510-run1.png",
+  "editedAfterGeneration": false,
+  "observations": [
+    "One rounded-square icon is centered on a white canvas with padding.",
+    "The dog has detailed curls, and the bag has rope handles and visible paper texture.",
+    "The background changes from pink to cream, with different Bichon Shop lettering."
+  ],
+  "interpretation": "One new generation compared with an existing gallery image using its documented prompt. Original generation settings and tool-reported model ID are unverified.",
+  "displayLabels": {
+    "left": "GPT 2.0",
+    "right": "GPT 2.5",
+    "basis": "Project owner requested these display labels. Tool-reported metadata remains separate."
+  },
+  "sourceDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "outputDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "promptSha256": "6427e7f61957e58d42fbcca7bca757d65c99489587f471ce4bfe8f402f1008de",
+  "sourceImageSha256": "f2422d47e1ecc53ce285088b36b574c8c082784759a07ec3fb3e8da0545be3ec",
+  "outputSha256": "5fd4ed3164787dfc42c8de6088d3ab9b6e9cb9c04a164d0bae95ec04d10f5040"
+}

@@ -1,0 +1,44 @@
+{
+  "caseId": 527,
+  "date": "2026-09-09",
+  "source": "https://x.com/john_my07/status/2091408386466214031",
+  "sourceImage": "data/images/case527.jpg",
+  "sourceGenerationParametersVerified": false,
+  "inputPromptPath": "docs/design/gpt-image-2-5/case527-test-input.json",
+  "promptModified": false,
+  "referenceImages": [],
+  "sampleCount": 1,
+  "tool": "image_gen.imagegen",
+  "userStatedModel": "GPT Image 2.5",
+  "toolReportedModel": null,
+  "toolReportedQuality": null,
+  "toolReportedCost": null,
+  "startedAt": "2026-09-09T02:04:06.606Z",
+  "finishedAt": "2026-09-09T02:06:13.172Z",
+  "approximateCallWallClockSeconds": 127,
+  "durationNote": "Wall-clock wait includes orchestration, queueing and transfer; not an isolated inference benchmark.",
+  "outputImage": "src/assets/image25-case527-run1.png",
+  "editedAfterGeneration": false,
+  "observations": [
+    "The ticket, Christ the Redeemer, yellow taxi and miniature base are present.",
+    "Building facades are more prominent and handwritten annotations are denser than in the gallery image.",
+    "This is the first untouched output from the exact gallery prompt."
+  ],
+  "interpretation": "One new generation compared with an existing gallery image using its documented prompt. Original generation settings and tool-reported model ID are unverified.",
+  "displayLabels": {
+    "left": "GPT 2.0",
+    "right": "GPT 2.5",
+    "basis": "Project owner requested these display labels. Tool-reported metadata remains separate."
+  },
+  "sourceDimensions": {
+    "width": 1122,
+    "height": 1402
+  },
+  "outputDimensions": {
+    "width": 1122,
+    "height": 1402
+  },
+  "promptSha256": "d37e97eedf944f43f6c429b7d0ee157a7470477cdc952d8d1337e8c7e4085feb",
+  "sourceImageSha256": "fe22ae11fed9d5ff1fc20abefd80c137a560c1b21e3775f32c89c6a6a89be226",
+  "outputSha256": "0d83a536f34893daeaa90150f18f7157c8165a36f12d305bf567e321be992627"
+}

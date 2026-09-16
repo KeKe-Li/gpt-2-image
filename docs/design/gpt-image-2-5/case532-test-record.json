@@ -1,0 +1,45 @@
+{
+  "caseId": 532,
+  "date": "2026-09-09",
+  "source": "https://x.com/ou_zhen599/status/2091160215928574397",
+  "sourceImage": "data/images/case532.jpg",
+  "sourceDimensions": {
+    "width": 3277,
+    "height": 4096
+  },
+  "sourceGenerationParametersVerified": false,
+  "inputPromptPath": "docs/design/gpt-image-2-5/case532-test-input.json",
+  "promptModified": false,
+  "referenceImages": [],
+  "sampleCount": 1,
+  "tool": "image_gen.imagegen",
+  "userStatedModel": "GPT Image 2.5",
+  "toolReportedModel": null,
+  "toolReportedQuality": null,
+  "toolReportedCost": null,
+  "startedAt": "2026-09-09T01:44:03.991Z",
+  "finishedAt": "2026-09-09T01:46:15.733Z",
+  "approximateCallWallClockSeconds": 132,
+  "durationNote": "Wall-clock wait includes orchestration, queueing and transfer; not an isolated inference benchmark.",
+  "outputImage": "src/assets/image25-case532-run1.png",
+  "outputDimensions": {
+    "width": 1024,
+    "height": 1536
+  },
+  "editedAfterGeneration": false,
+  "observations": [
+    "The requested 2-column by 3-row grid and recurring green dress are present.",
+    "LIMORA is readable on the hero glass. Citrus, ice, juice and glass are visually detailed.",
+    "Panel 2 shows a dripping lemon half instead of the requested floating lemon slice.",
+    "Extra branding appears on the cart and the lower campaign strip."
+  ],
+  "interpretation": "One new generation compared with an existing gallery image using its documented prompt. Original generation settings and actual model IDs are unverified, so this is not a controlled model benchmark.",
+  "promptSha256": "fb302b56879b7f824d551b1f7b6d87135fffab5b34635b24301102c65ead3e17",
+  "outputSha256": "e79583d6003f3b01e62166ae5cb95e2020ed348d5a924e7af9e321ae8d39dc80",
+  "sourceImageSha256": "da0294912cd02ddc180aadb419095c9d72e06fd90f5f002c76869c461a9905c9",
+  "displayLabels": {
+    "left": "GPT 2.0",
+    "right": "GPT 2.5",
+    "basis": "Project owner requested these display labels. Original tool-reported model metadata remains unchanged."
+  }
+}

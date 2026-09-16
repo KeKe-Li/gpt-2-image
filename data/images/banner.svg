@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#071526"/>
+      <stop offset="55%" stop-color="#0a2030"/>
+      <stop offset="100%" stop-color="#0b4441"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#67e8d2"/>
+      <stop offset="100%" stop-color="#a8f07b"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6ee7df"/>
+      <stop offset="100%" stop-color="#42b7e9"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#8bd7e7" stroke-opacity=".08"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="400" rx="28" fill="url(#grid)"/>
+
+  <!-- Decorative flowing lines -->
+  <path d="M270 105 C470 40, 690 30, 1110 138" fill="none" stroke="#69c9d8" stroke-opacity=".16" stroke-width="2"/>
+  <path d="M250 300 C500 365, 780 335, 1120 315" fill="none" stroke="#59d7ca" stroke-opacity=".12" stroke-width="2"/>
+  <path d="M535 70 C690 18, 860 52, 1045 120" fill="none" stroke="#4bb9d8" stroke-opacity=".10" stroke-width="1"/>
+
+  <!-- Main panel -->
+  <rect x="76" y="56" width="650" height="288" rx="28" fill="#071827" fill-opacity=".88" stroke="#3d6374" stroke-opacity=".55" filter="url(#shadow)"/>
+
+  <!-- Pill -->
+  <rect x="112" y="86" width="186" height="34" rx="17" fill="#102b3a" stroke="#4fd9cf" stroke-opacity=".65"/>
+  <text x="205" y="109" text-anchor="middle" fill="#91f5e3" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" letter-spacing="1.5">PROMPT AS CODE</text>
+
+  <!-- Main title -->
+  <text x="112" y="170" fill="#f2f7fb" font-family="Inter,Arial,sans-serif" font-size="50" font-weight="700">GPT Image 2.5</text>
+  <text x="112" y="210" fill="url(#accent)" font-family="Inter,Arial,sans-serif" font-size="29" font-weight="700">工业级提示词引擎与模板库</text>
+  <text x="112" y="249" fill="#c7d5de" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="500">把社区案例逆向成可复用协议，让图像生成从灵感走向系统工程。</text>
+
+  <!-- Stats -->
+  <rect x="112" y="286" width="154" height="42" rx="12" fill="#f4f8fb"/>
+  <text x="189" y="313" text-anchor="middle" fill="#163045" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="800">370+ 案例</text>
+
+  <rect x="278" y="286" width="162" height="42" rx="12" fill="#103040" stroke="#38c7c2" stroke-opacity=".55"/>
+  <text x="359" y="313" text-anchor="middle" fill="#e0fbf8" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="700">20+ 模板</text>
+
+  <rect x="452" y="286" width="187" height="42" rx="12" fill="#122c43" stroke="#557ea0" stroke-opacity=".65"/>
+  <text x="545" y="313" text-anchor="middle" fill="#e3edf5" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="700">Schema 驱动</text>
+
+  <!-- Right gallery card -->
+  <rect x="728" y="70" width="174" height="220" rx="25" fill="#10283a" stroke="#4e7182" stroke-opacity=".7" filter="url(#shadow)"/>
+  <text x="750" y="105" fill="#f0f7fb" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="800">Case Gallery</text>
+
+  <rect x="750" y="123" width="128" height="91" rx="15" fill="#d7f0f3"/>
+  <rect x="750" y="123" width="128" height="91" rx="15" fill="#d9eef3"/>
+  <circle cx="864" cy="154" r="17" fill="#f1c95e"/>
+  <path d="M760 193 L785 157 L805 174 L827 151 L868 193 Z" fill="#73dfcf"/>
+  <rect x="750" y="224" width="93" height="11" rx="5" fill="#76bfd3"/>
+  <rect x="750" y="244" width="68" height="10" rx="5" fill="#76bfd3"/>
+
+  <!-- Output card -->
+  <rect x="879" y="111" width="184" height="213" rx="25" fill="#fff0c9" stroke="#ffe0a1" filter="url(#shadow)"/>
+  <rect x="903" y="136" width="136" height="91" rx="18" fill="#092239"/>
+  <path d="M916 205 L950 166 L971 185 L992 164 L1028 205 Z" fill="#71dfd1"/>
+  <circle cx="1006" cy="153" r="10" fill="#ffd15d"/>
+  <text x="912" y="250" fill="#173347" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="800">AI Output</text>
+  <rect x="912" y="270" width="112" height="9" rx="4" fill="#dfb66b"/>
+  <rect x="912" y="288" width="82" height="9" rx="4" fill="#dfb66b"/>
+
+  <!-- Prompt floating card -->
+  <rect x="768" y="229" width="180" height="103" rx="22" fill="#b8efd7" filter="url(#shadow)"/>
+  <text x="791" y="260" fill="#153f38" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="17" font-weight="800">{ prompt }</text>
+  <rect x="791" y="276" width="115" height="8" rx="4" fill="#72c8ac"/>
+  <rect x="791" y="294" width="132" height="8" rx="4" fill="#72c8ac"/>
+  <rect x="791" y="312" width="101" height="8" rx="4" fill="#72c8ac"/>
+
+  <!-- Connector / nodes -->
+  <path d="M718 202 C738 202, 738 174, 750 156" fill="none" stroke="#66dfd2" stroke-width="2"/>
+  <path d="M718 202 C746 202, 761 215, 786 218" fill="none" stroke="#72b9ed" stroke-width="2"/>
+  <circle cx="720" cy="202" r="8" fill="#f3fbff"/>
+  <circle cx="750" cy="156" r="6" fill="#65e4d3"/>
+  <circle cx="785" cy="218" r="6" fill="#79baf0"/>
+
+  <!-- Bottom annotation -->
+  <text x="740" y="357" fill="#7aa0ad" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" letter-spacing=".6">cases.reverse_engineered → reusable_templates</text>
+
+  <!-- Subtle 2.5 badge -->
+  <rect x="1047" y="342" width="92" height="32" rx="16" fill="#163b47" stroke="#4dd8c8" stroke-opacity=".45"/>
+  <text x="1093" y="364" text-anchor="middle" fill="#9cefe1" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800">GPT 2.5</text>
+</svg>

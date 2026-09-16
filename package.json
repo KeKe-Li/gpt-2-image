@@ -1,0 +1,46 @@
+{
+  "name": "gpt-2-image-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "generate:site-data": "node scripts/generate-site-data.mjs",
+    "generate:style-skill": "node scripts/generate-style-skill.mjs",
+    "review:upstream": "node scripts/upstream-review.mjs",
+    "validate:cases": "node scripts/validate-cases.mjs",
+    "verify:references": "node scripts/verify-repository-references.mjs",
+    "check": "npm run generate:site-data && npm run validate:cases && npm run verify:references && npm test",
+    "ga4:oauth": "node scripts/google-analytics-oauth.mjs",
+    "install:skill": "node scripts/install-style-skill.mjs",
+    "pack:skill": "npm pack ./agents/skills/gpt-image-2-style-library --dry-run",
+    "publish:skill:npm": "npm publish ./agents/skills/gpt-image-2-style-library --access public",
+    "predev": "npm run generate:site-data && npm run generate:style-skill",
+    "dev": "vite",
+    "dev:alipay-sandbox": "node scripts/alipay-webpay-sandbox-server.mjs",
+    "prebuild": "npm run generate:site-data && npm run generate:style-skill",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test api/_lib/*.test.js shared/apimart.test.js src/apimartClient.test.js && npm run test:unit",
+    "test:unit": "vitest run",
+    "test:apimart": "node --test shared/apimart.test.js src/apimartClient.test.js api/_lib/apimart.test.js api/_lib/generation.test.js"
+  },
+  "dependencies": {
+    "@google-analytics/data": "^5.2.2",
+    "@supabase/supabase-js": "^2.105.4",
+    "@vitejs/plugin-react": "^5.1.1",
+    "alipay-sdk": "^4.14.0",
+    "google-auth-library": "^10.6.2",
+    "lucide-react": "^0.561.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-router-dom": "^7.18.3",
+    "stripe": "^22.1.1",
+    "vite": "^7.2.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "jsdom": "^27.4.0",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,84 @@
+/* 公开内容页（模板、Skill、社群）共享样式，消费 tokens.css 设计令牌。 */
+
+.content-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-7);
+}
+
+.content-page h1 {
+  font-size: var(--text-title-search);
+  margin: var(--space-2) 0;
+}
+
+.content-page h2 {
+  font-size: var(--text-subheading);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.content-page__lede {
+  font-size: var(--text-lede);
+  color: var(--color-ink-soft);
+}
+
+.content-steps {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.content-steps li {
+  padding: var(--space-3);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.content-steps span {
+  font-size: var(--text-label);
+  color: var(--color-accent);
+}
+
+.content-steps strong {
+  display: block;
+  margin: var(--space-1) 0;
+  font-size: var(--text-body-large);
+}
+
+.content-steps p {
+  margin: 0;
+  color: var(--color-ink-soft);
+  font-size: var(--text-control);
+}
+
+.content-code {
+  overflow-x: auto;
+  padding: var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-control);
+  color: var(--color-ink);
+  background: var(--color-sidebar);
+  color: var(--color-sidebar-text);
+  border-radius: var(--radius-small);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.content-notice {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-status);
+  color: var(--color-ink-soft);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+}
+
+.content-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}

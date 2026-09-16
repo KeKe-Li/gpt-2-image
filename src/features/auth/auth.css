@@ -1,0 +1,207 @@
+/* 登录对话框与账户页样式，消费 tokens.css 设计令牌。 */
+
+.auth-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgb(31 33 29 / 55%);
+}
+
+.auth-dialog {
+  position: relative;
+  width: min(26rem, 100%);
+  padding: var(--space-5) var(--space-4);
+  background: var(--color-paper-raised);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-float);
+}
+
+.auth-dialog__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+}
+
+.auth-tab {
+  min-height: 2.6rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+  background: var(--color-paper);
+  font-weight: 750;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.auth-tab[aria-selected='true'] {
+  border-color: var(--color-accent);
+  background: rgb(255 255 255 / 65%);
+  color: var(--color-ink);
+}
+
+.auth-tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.auth-dialog h2 {
+  font-size: var(--text-subheading);
+  margin: 0 0 var(--space-3);
+}
+
+.auth-dialog__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 2rem;
+  height: 2rem;
+  font-size: var(--text-subheading);
+  line-height: 1;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.auth-dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.auth-dialog__form label {
+  font-size: var(--text-label);
+  color: var(--color-ink-soft);
+}
+
+.auth-dialog__form input {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-control);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+}
+
+.auth-dialog__divider {
+  margin: var(--space-3) 0;
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--color-ink-soft);
+}
+
+.auth-dialog__switches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.auth-dialog .text-link {
+  padding: 0;
+  border: 0;
+  color: var(--color-accent-deep);
+  background: transparent;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.auth-dialog .text-link:hover {
+  text-decoration: underline;
+}
+
+.auth-dialog__hint {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-status);
+  color: var(--color-ink-soft);
+}
+
+.auth-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.auth-dialog__actions .button {
+  flex: 1 1 auto;
+}
+
+.auth-dialog__error {
+  margin-top: var(--space-3);
+  font-size: var(--text-status);
+  color: var(--color-accent-deep);
+}
+
+/* 账户页 */
+.account-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.account-page h1 {
+  font-size: var(--text-title-workspace);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.account-section {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.account-section h2 {
+  font-size: var(--text-body-large);
+  margin: 0 0 var(--space-3);
+}
+
+.account-favorites {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.account-favorites li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+}
+
+.account-profile {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2);
+  align-items: end;
+  margin: var(--space-3) 0;
+}
+
+.account-profile label {
+  grid-column: 1 / -1;
+  font-size: var(--text-label);
+  color: var(--color-ink-soft);
+}
+
+.account-profile input {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-control);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+}

@@ -1,0 +1,35 @@
+name: Publish GPT-Image2 Style Skill
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'gpt-image-2-style-library-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  github-packages:
+    name: GitHub Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          scope: '@keke-li'
+
+      - name: Publish scoped package
+        working-directory: agents/skills/gpt-image-2-style-library
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm pkg set name=@keke-li/gpt-image-2-style-library
+          npm pkg set publishConfig.registry=https://npm.pkg.github.com
+          npm publish --registry=https://npm.pkg.github.com

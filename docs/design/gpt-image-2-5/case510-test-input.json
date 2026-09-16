@@ -1,0 +1,10 @@
+{
+  "caseId": 510,
+  "title": "Bichon Shop 拟物 App 图标",
+  "source": "https://x.com/iamaiistudio/status/2071923809788285125",
+  "prompt": "A macOS app icon for an app named 'Bichon Shop'. A single squircle icon with smooth continuous rounded corners, centered on a white canvas with padding, occupying about 80% of the canvas. Modern light skeuomorphic macOS App Store style. Only one icon.",
+  "referenceImages": [],
+  "tool": "image_gen.imagegen",
+  "requestedModel": "built-in current model",
+  "promptModified": false
+}

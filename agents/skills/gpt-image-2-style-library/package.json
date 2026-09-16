@@ -1,0 +1,39 @@
+{
+  "name": "gpt-image-2-style-library",
+  "version": "1.0.4",
+  "description": "Agent skill for choosing GPT-Image2 visual styles, prompt templates, categories, and scene tags.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KeKe-Li/gpt-2-image.git",
+    "directory": "agents/skills/gpt-image-2-style-library"
+  },
+  "homepage": "https://github.com/KeKe-Li/gpt-2-image#agent-skill",
+  "bugs": {
+    "url": "https://github.com/KeKe-Li/gpt-2-image/issues"
+  },
+  "keywords": [
+    "agent-skill",
+    "claude-code",
+    "codex",
+    "codex-skill",
+    "gpt-image-2",
+    "prompt",
+    "image-generation",
+    "style-library"
+  ],
+  "bin": {
+    "gpt-image-2-style-library": "bin/install.mjs"
+  },
+  "files": [
+    "SKILL.md",
+    "agents",
+    "assets",
+    "bin",
+    "references"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

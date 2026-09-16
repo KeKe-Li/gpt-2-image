@@ -1,0 +1,96 @@
+/* 定价与账单页样式，消费 tokens.css 设计令牌。 */
+
+.pricing-page,
+.billing-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.pricing-page h1,
+.billing-page h1 {
+  font-size: var(--text-title-search);
+  margin: var(--space-2) 0;
+}
+
+.pricing-page__lede {
+  font-size: var(--text-lede);
+  color: var(--color-ink-soft);
+}
+
+.pricing-page h2,
+.billing-page h2 {
+  font-size: var(--text-subheading);
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.pricing-card h3 {
+  font-size: var(--text-body-large);
+  margin: 0;
+}
+
+.pricing-card__credits {
+  font-size: var(--text-status);
+  color: var(--color-ink-soft);
+}
+
+.pricing-card__price {
+  font-size: var(--text-subheading);
+  color: var(--color-accent-deep);
+}
+
+.pricing-card__desc {
+  font-size: var(--text-caption);
+  color: var(--color-ink-soft);
+}
+
+.pricing-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.pricing-error,
+.billing-error {
+  font-size: var(--text-status);
+  color: var(--color-accent-deep);
+}
+
+.billing-history {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.billing-history li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-control);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-small);
+}

@@ -1,0 +1,44 @@
+{
+  "caseId": 523,
+  "date": "2026-09-09",
+  "source": "https://x.com/Taaruk_/status/2090307485374578755",
+  "sourceImage": "data/images/case523.jpg",
+  "sourceGenerationParametersVerified": false,
+  "inputPromptPath": "docs/design/gpt-image-2-5/case523-test-input.json",
+  "promptModified": false,
+  "referenceImages": [],
+  "sampleCount": 1,
+  "tool": "image_gen.imagegen",
+  "userStatedModel": "GPT Image 2.5",
+  "toolReportedModel": null,
+  "toolReportedQuality": null,
+  "toolReportedCost": null,
+  "startedAt": "2026-09-09T02:04:06.606Z",
+  "finishedAt": "2026-09-09T02:05:07.234Z",
+  "approximateCallWallClockSeconds": 61,
+  "durationNote": "Wall-clock wait includes orchestration, queueing and transfer; not an isolated inference benchmark.",
+  "outputImage": "src/assets/image25-case523-run1.png",
+  "editedAfterGeneration": false,
+  "observations": [
+    "The stone bridge and pond are larger and more prominent in the foreground.",
+    "Trees fill more of the composition; watercolor-and-ink styling is retained.",
+    "No visible text was added."
+  ],
+  "interpretation": "One new generation compared with an existing gallery image using its documented prompt. Original generation settings and tool-reported model ID are unverified.",
+  "displayLabels": {
+    "left": "GPT 2.0",
+    "right": "GPT 2.5",
+    "basis": "Project owner requested these display labels. Tool-reported metadata remains separate."
+  },
+  "sourceDimensions": {
+    "width": 1085,
+    "height": 1449
+  },
+  "outputDimensions": {
+    "width": 1122,
+    "height": 1402
+  },
+  "promptSha256": "2459c90b2604b453a6e7036f64a43400c5cd7930653cb11b9df953327ae94dc8",
+  "sourceImageSha256": "8aae8ada81d5518d972a910ce3b6efbfd063d0f794d071b8fb9d63ecd5047441",
+  "outputSha256": "e6b8a068836b2ab3b027567ad3d376228856de96920f5cf45de732534c75280f"
+}

@@ -1,0 +1,67 @@
+/* 生成工作台样式，消费 tokens.css 设计令牌。 */
+
+.generation-page {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+}
+
+.generation-page h1 {
+  font-size: var(--text-title-workspace);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.generation-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.generation-form label {
+  font-size: var(--text-label);
+  color: var(--color-ink-soft);
+}
+
+.generation-form textarea {
+  width: 100%;
+  padding: var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-control);
+  line-height: 1.6;
+  color: var(--color-ink);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+  resize: vertical;
+}
+
+.generation-form__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-caption);
+  color: var(--color-ink-soft);
+}
+
+.generation-error {
+  font-size: var(--text-status);
+  color: var(--color-accent-deep);
+}
+
+.generation-result {
+  margin: var(--space-4) 0 0;
+}
+
+.generation-result img {
+  width: 100%;
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--color-line);
+}
+
+.generation-result figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--color-ink-soft);
+}

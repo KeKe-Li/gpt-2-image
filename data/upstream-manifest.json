@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "repository": "https://github.com/KeKe-Li/gpt-2-image"
+  },
+  "source": {
+    "repository": "https://github.com/freestylefly/awesome-gpt-image-2",
+    "commit": "073d105d4dbb3f3afcd2e7cd194cee3a557b0999",
+    "commitTimestamp": "2026-09-09T08:31:41Z",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2026 freestylefly"
+  },
+  "baselineImport": {
+    "sourceFileCount": 723,
+    "successfullyImportedFileCount": 723,
+    "deduplicatedFileCount": 0,
+    "missingFileCount": 0,
+    "hashMismatchCount": 0,
+    "unrecognizedFields": [],
+    "archiveSha256": "37cff7342094fa2858c9b0a46fed31f121cd7efd8788504bdde2631da00d14ca",
+    "verification": "所有 723 个归档文件均使用 git hash-object 计算 Git blob SHA-1，并与固定提交的非截断 Git Tree API 清单逐项比对。"
+  },
+  "contentCounts": {
+    "cases": 541,
+    "categories": 13,
+    "styles": 19,
+    "scenes": 10,
+    "dataImageResources": 571,
+    "templates": 22
+  },
+  "caseValidation": {
+    "uniqueCaseIds": 541,
+    "duplicateCaseIdCount": 0,
+    "missingRequiredFieldCount": 0,
+    "missingReferencedImageCount": 0,
+    "unknownCategoryValues": [],
+    "unknownStyleValues": [],
+    "unknownSceneValues": [],
+    "emptySourceLabelCount": 0,
+    "referencedUniqueImageCount": 541,
+    "orphanImageResourceCount": 30,
+    "orphanImageResources": [
+      "/images/banner.svg",
+      "/images/case12.jpg",
+      "/images/case169.jpg",
+      "/images/case170.jpg",
+      "/images/category-covers/architecture.jpg",
+      "/images/category-covers/brand.jpg",
+      "/images/category-covers/character.jpg",
+      "/images/category-covers/document.jpg",
+      "/images/category-covers/gallery.jpg",
+      "/images/category-covers/history.jpg",
+      "/images/category-covers/illustration.jpg",
+      "/images/category-covers/infographic.jpg",
+      "/images/category-covers/latest.jpg",
+      "/images/category-covers/other.jpg",
+      "/images/category-covers/photo.jpg",
+      "/images/category-covers/poster.jpg",
+      "/images/category-covers/product.jpg",
+      "/images/category-covers/scene.jpg",
+      "/images/category-covers/ui.jpg",
+      "/images/site-preview.png",
+      "/images/sponsors/apimart.jpg",
+      "/images/sponsors/ciyuan-api.jpg",
+      "/images/sponsors/doloffer-en.jpg",
+      "/images/sponsors/doloffer-zh.jpg",
+      "/images/sponsors/hiapi.jpg",
+      "/images/sponsors/packycode.png",
+      "/images/sponsors/pptoken.png",
+      "/images/sponsors/wechat-personal.jpg",
+      "/images/wechat-community.jpg",
+      "/images/公众号.png"
+    ],
+    "orphanImageResourceExplanation": "这些资源不是 data/cases.json 中案例的主图；它们是站点横幅、站点预览、分类封面、赞助/社群图片，以及上游保留但当前案例清单未引用的 case12、case169、case170 图片。全部仍按固定提交原样导入并完成 blob 哈希校验。"
+  },
+  "requiredArtifacts": {
+    "templates": {
+      "exists": true,
+      "paths": [
+        "docs/templates.md",
+        "data/style-library.json"
+      ]
+    },
+    "skill": {
+      "exists": true,
+      "path": "agents/skills/gpt-image-2-style-library/SKILL.md"
+    },
+    "license": {
+      "exists": true,
+      "path": "LICENSE"
+    },
+    "sourceAttribution": {
+      "exists": true,
+      "paths": [
+        "docs/disclaimer.md",
+        "README.md",
+        "README.zh-CN.md",
+        "README.ja.md"
+      ]
+    }
+  }
+}

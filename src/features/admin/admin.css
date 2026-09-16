@@ -1,0 +1,69 @@
+/* 管理后台样式，消费 tokens.css 设计令牌。 */
+
+.admin-page {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.admin-page h1 {
+  font-size: var(--text-title-workspace);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.admin-page h2 {
+  font-size: var(--text-subheading);
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.admin-metric__label {
+  font-size: var(--text-label);
+  color: var(--color-ink-soft);
+}
+
+.admin-metric__value {
+  font-size: var(--text-subheading);
+  color: var(--color-ink);
+}
+
+.admin-users table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-control);
+}
+
+.admin-users th,
+.admin-users td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.admin-empty {
+  color: var(--color-ink-soft);
+  font-size: var(--text-status);
+}
+
+.admin-error {
+  color: var(--color-accent-deep);
+  font-size: var(--text-status);
+}

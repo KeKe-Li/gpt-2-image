@@ -1,0 +1,57 @@
+:root {
+  color-scheme: light;
+  --font-display: Georgia, 'Noto Serif SC', 'Songti SC', serif;
+  --font-sans: Inter, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  --color-paper: #f3efe6;
+  --color-paper-raised: #fbf8f1;
+  --color-ink: #1f211d;
+  --color-ink-soft: #606258;
+  --color-line: #d8d1c3;
+  --color-accent: #b4482f;
+  --color-accent-deep: #8c321f;
+  --color-workspace: #f4f4f0;
+  --color-sidebar: #20221f;
+  --color-sidebar-text: #f2efe7;
+
+  --text-brand-meta: 0.62rem;
+  --text-label: 0.72rem;
+  --text-caption: 0.75rem;
+  --text-menu: 0.78rem;
+  --text-footer: 0.82rem;
+  --text-status: 0.85rem;
+  --text-control: 0.88rem;
+  --text-navigation: 0.9rem;
+  --text-body: 1rem;
+  --text-brand: 1.12rem;
+  --text-body-large: 1.15rem;
+  --text-lede: clamp(1rem, 1.7vw, 1.2rem);
+  --text-case-title: 1.2rem;
+  --text-subheading: 1.55rem;
+  --text-title-search: clamp(1.7rem, 3vw, 2.7rem);
+  --text-title-workspace: clamp(2rem, 4vw, 3.5rem);
+  --text-title-section: clamp(2.7rem, 6vw, 6rem);
+  --text-title-hero: clamp(3rem, 7.4vw, 7.2rem);
+  --text-title-hero-mobile: clamp(2.8rem, 14vw, 4.5rem);
+
+  --space-1: 0.375rem;
+  --space-2: 0.625rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.25rem;
+  --space-6: 3.5rem;
+  --space-7: 5.5rem;
+  --space-8: 8rem;
+
+  --radius-small: 0.35rem;
+  --radius-medium: 0.75rem;
+  --shadow-float: 0 1.25rem 3.5rem rgb(31 33 29 / 12%);
+  --duration-fast: 180ms;
+  --duration-image: 550ms;
+  --duration-enter: 600ms;
+  --duration-slow: 700ms;
+  --duration-reduced: 0.01ms;
+  --delay-enter: 100ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-height: 5rem;
+}
