@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="504" viewBox="0 0 1580 504">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061b2b"/>
+      <stop offset="0.55" stop-color="#06202c"/>
+      <stop offset="1" stop-color="#0b3034"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#031923"/>
+      <stop offset="1" stop-color="#041c27"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67f2dd"/>
+      <stop offset="1" stop-color="#5cebcf"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity=".28"/>
+    </filter>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#6aa4b8" stroke-opacity=".09"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1580" height="504" fill="url(#bg)"/>
+  <rect width="1580" height="504" fill="url(#grid)"/>
+
+  <!-- subtle orbital lines -->
+  <path d="M480 108 C720 22, 1080 24, 1468 170" fill="none" stroke="#5ab5bd" stroke-opacity=".10" stroke-width="2"/>
+  <path d="M570 70 C860 28, 1170 58, 1510 152" fill="none" stroke="#5ab5bd" stroke-opacity=".08" stroke-width="2"/>
+  <path d="M910 455 C1130 430, 1335 422, 1484 407" fill="none" stroke="#56d7c8" stroke-opacity=".12" stroke-width="2"/>
+
+  <!-- Main left panel -->
+  <rect x="89" y="60" width="870" height="384" rx="38" fill="url(#panel)" stroke="#35586a" stroke-width="1.3"/>
+  <rect x="90" y="61" width="868" height="382" rx="37" fill="none" stroke="#0b3a49" stroke-opacity=".55"/>
+
+  <!-- Prompt as Code pill -->
+  <rect x="138" y="100" width="249" height="47" rx="24" fill="#082b36" stroke="#2ecdc4" stroke-width="1.2"/>
+  <text x="262.5" y="131" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800"
+        letter-spacing="1.6" fill="#75f0df">PROMPT AS CODE</text>
+
+  <!-- Main title -->
+  <text x="138" y="212"
+        font-family="Inter, Arial, sans-serif" font-size="66" font-weight="800"
+        letter-spacing="-2.2" fill="#f4f7fa">GPT Image 2.5</text>
+
+  <!-- English subtitle -->
+  <text x="138" y="267"
+        font-family="Inter, Arial, sans-serif" font-size="38" font-weight="750"
+        letter-spacing="-0.8" fill="url(#cyan)">Industrial-Grade Prompt Engine &amp; Template Library</text>
+
+  <!-- Description -->
+  <text x="138" y="320"
+        font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600"
+        fill="#c6d2d8">Turn community examples into reusable protocols, taking image generation</text>
+  <text x="138" y="348"
+        font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600"
+        fill="#c6d2d8">from inspiration to systems engineering.</text>
+
+  <!-- Metric cards -->
+  <g font-family="Inter, Arial, sans-serif" font-weight="800">
+    <rect x="138" y="367" width="206" height="56" rx="15" fill="#f5f8fa"/>
+    <text x="241" y="403" text-anchor="middle" font-size="22" fill="#183044">370+ CASES</text>
+
+    <rect x="359" y="367" width="217" height="56" rx="15" fill="#0b2a35" stroke="#239ea5" stroke-width="1.2"/>
+    <text x="467.5" y="403" text-anchor="middle" font-size="21" fill="#d8f4f1">20+ TEMPLATES</text>
+
+    <rect x="591" y="367" width="250" height="56" rx="15" fill="#112d45" stroke="#416783" stroke-width="1.2"/>
+    <text x="716" y="403" text-anchor="middle" font-size="21" fill="#edf2f5">SCHEMA-DRIVEN</text>
+  </g>
+
+  <!-- Right case gallery panel -->
+  <rect x="959" y="79" width="233" height="295" rx="35" fill="#102b40" stroke="#49697a" stroke-width="1.2"/>
+  <text x="989" y="128"
+        font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800"
+        fill="#f4f7fa">Case Gallery</text>
+
+  <!-- gallery card 1 -->
+  <rect x="989" y="150" width="173" height="123" rx="20" fill="#d7eef4"/>
+  <circle cx="1140" cy="192" r="21" fill="#efbd4e"/>
+  <path d="M1002 243 L1035 196 L1062 218 L1093 188 L1146 243 Z" fill="#6bd5ca"/>
+  <path d="M989 283 C1016 283, 1040 283, 1065 283" fill="none" stroke="#62c7d3" stroke-width="14" stroke-linecap="round"/>
+  <path d="M989 317 C1011 317, 1032 317, 1055 317" fill="none" stroke="#62c7d3" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- gallery card 2 -->
+  <rect x="1160" y="134" width="248" height="285" rx="33" fill="#fff0c9" stroke="#e6d6ae" stroke-width="1" filter="url(#shadow)"/>
+  <rect x="1192" y="168" width="183" height="123" rx="24" fill="#09263b"/>
+  <circle cx="1330" cy="190" r="13.5" fill="#f8c653"/>
+  <path d="M1210 260 L1256 207 L1284 232 L1310 207 L1360 260 Z" fill="#67d9cb"/>
+  <text x="1284" y="320" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800"
+        fill="#183044">OUTPUT</text>
+  <path d="M1192 346 H1354" stroke="#dfb65c" stroke-width="11" stroke-linecap="round"/>
+  <path d="M1192 377 H1314" stroke="#dfb65c" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- Prompt code card -->
+  <rect x="1013" y="291" width="240" height="139" rx="27" fill="#b9f2d7" filter="url(#shadow)"/>
+  <text x="1043" y="331"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="22" font-weight="800" fill="#153d3c">{ prompt }</text>
+  <rect x="1043" y="354" width="154" height="9" rx="5" fill="#68c7a9"/>
+  <rect x="1043" y="378" width="181" height="9" rx="5" fill="#68c7a9"/>
+  <rect x="1043" y="402" width="135" height="9" rx="5" fill="#68c7a9"/>
+
+  <!-- Connector lines and nodes -->
+  <path d="M948 256 C968 256, 980 248, 989 226" fill="none" stroke="#63e6d5" stroke-width="3"/>
+  <circle cx="948" cy="256" r="10" fill="#f4f7fa"/>
+  <circle cx="989" cy="194" r="8" fill="#61e4d3"/>
+  <path d="M948 256 C982 258, 1010 272, 1037 276" fill="none" stroke="#79b9d4" stroke-width="3"/>
+  <circle cx="1037" cy="276" r="8" fill="#70b7db"/>
+
+  <!-- bottom code annotation -->
+  <text x="977" y="462"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="19" font-weight="650" letter-spacing="1.1"
+        fill="#789da9">cases.reverse_engineered → reusable_assets</text>
+
+  <!-- GPT 2.5 badge -->
+  <rect x="1384" y="441" width="126" height="44" rx="22" fill="#0a3038" stroke="#238e8f" stroke-width="1.2"/>
+  <text x="1447" y="469" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800"
+        fill="#c9f3ee">GPT 2.5</text>
+</svg>

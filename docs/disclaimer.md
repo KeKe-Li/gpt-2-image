@@ -27,4 +27,4 @@
 
 微信搜 **keke** 或扫描下方二维码关注keke公众号。加入 GPT-Image2 交流群，请关注后回复：**gpt-image-2交流群**。
 
-![keke微信交流群二维码](../data/images/wechat-community.jpg)
+![keke微信交流群二维码](../src/assets/wechat-community.jpg)
