@@ -1,4 +1,4 @@
-<p align="center"><img src="./data/images/banner.svg" alt="GPT-Image2 Prompt System" width="800" /></p>
+<p align="center"><img src="./data/images/banner-en.svg" alt="GPT-Image2 Prompt System" width="800" /></p>
 
 <h3 align="center">Prompt as GPT-Image2.5: An Industrial-Grade Prompt Engine and Template Library with 20+ Production-Ready Templates</h3>
 
