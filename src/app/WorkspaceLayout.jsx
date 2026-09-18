@@ -44,7 +44,7 @@ export default function WorkspaceLayout({ children }) {
                 className="workspace-sidebar__signout"
                 onClick={() => {
                   defaultAuth.signOut()
-                    .then(() => window.location.assign('/'))
+                    .then(() => window.location.assign(localizedPath('/')))
                     .catch(() => {});
                 }}
               >

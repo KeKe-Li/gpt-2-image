@@ -6,6 +6,7 @@ import App from './App';
 describe('App', () => {
   afterEach(() => {
     cleanup();
+    window.localStorage.removeItem('gpt-image-gallery-locale');
     window.history.replaceState({}, '', '/');
   });
 
@@ -32,6 +33,16 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { name: '创作工作台' })).toBeInTheDocument();
     // 生成服务未配置时，工作台安全降级为“尚未配置”提示，不崩溃。
     expect(await screen.findByText('图片生成服务尚未配置。')).toBeInTheDocument();
+  });
+
+  test('workspace 路由在无路径语言前缀时仍继承已存储的英文 locale', async () => {
+    window.localStorage.setItem('gpt-image-gallery-locale', 'en');
+    renderAt('/workspace');
+
+    expect(await screen.findByRole('navigation', { name: 'Workspace navigation' }))
+      .toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Browse cases' })).toHaveAttribute('href', '/en/cases');
+    expect(screen.getByRole('link', { name: 'Back to public site' })).toHaveAttribute('href', '/en');
   });
 
   test('案例详情路由可达并保留案例标识', async () => {
