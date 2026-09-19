@@ -1,22 +1,8 @@
 import { getApimartConfig, getApimartTask } from '../_lib/apimart.js';
 import { findPlatformGeneration, settlePlatformGeneration } from '../_lib/generation.js';
+import { json, methodNotAllowed, readJsonBody } from '../_lib/http.js';
 import { getSupabaseAdminClient } from '../_lib/supabase.js';
 import { extractApimartTaskId, isValidApimartTaskId } from '../../shared/apimart.js';
-
-function json(res, status, payload) {
-  res.setHeader('Cache-Control', 'no-store');
-  res.status(status).json(payload);
-}
-
-async function readBody(req) {
-  if (Buffer.isBuffer(req.body)) return JSON.parse(req.body.toString('utf8') || '{}');
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
-  const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
-  const raw = Buffer.concat(chunks).toString('utf8');
-  return raw ? JSON.parse(raw) : {};
-}
 
 export async function reconcileApimartCallback({
   client,
@@ -40,12 +26,11 @@ export async function reconcileApimartCallback({
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
+    return methodNotAllowed(res, 'POST');
   }
   let payload;
   try {
-    payload = await readBody(req);
+    payload = await readJsonBody(req);
   } catch {
     return json(res, 400, { ok: false, error: 'INVALID_CALLBACK' });
   }

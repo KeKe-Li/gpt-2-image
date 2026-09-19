@@ -76,12 +76,12 @@ function selectCuratedCases(cases = []) {
   return [...preferred, ...cases.filter((item) => !selectedIds.has(Number(item.id)))].slice(0, 3);
 }
 
-export default function HomePage({ galleryStatus = null, cases = [] }) {
+export default function HomePage({ galleryStatus = null, cases = [], featuredCases = null }) {
   const { locale, localizedPath } = useLocale();
   const t = copy[locale] || copy['zh-CN'];
   const casesPath = localizedPath('/cases');
   const isEn = locale === 'en';
-  const featuredCases = selectCuratedCases(cases);
+  const featuredItems = selectCuratedCases(Array.isArray(featuredCases) ? featuredCases : cases);
 
   return (
     <div className="home-page">
@@ -132,7 +132,7 @@ export default function HomePage({ galleryStatus = null, cases = [] }) {
           <p>{t.featuredDesc}</p>
         </header>
         <div className="editorial-gallery">
-          {featuredCases.map((item, index) => (
+          {featuredItems.map((item, index) => (
             <Link className="editorial-case" to={`${casesPath}?case=${item.id}`} key={item.id}>
               <figure>
                 <div className="editorial-case__media">

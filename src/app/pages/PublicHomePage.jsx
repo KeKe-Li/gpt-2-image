@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
-import { loadPublicGalleryData } from '../../features/gallery/publicDataLoader';
-import { loadCases } from '../../features/gallery/gallery-data';
+import { fetchHomeSummary, loadPublicGalleryData } from '../../features/gallery/publicDataLoader';
 import HomePage from '../../features/home/HomePage';
 
-const defaultLoadGallery = (options = {}) => loadPublicGalleryData({ ...options, loadCases });
+const defaultLoadGallery = (options = {}) => loadPublicGalleryData({ ...options, loadSummary: fetchHomeSummary });
 
 const loadingGallery = Object.freeze({
   status: 'loading',
-  cases: [],
+  totalCases: 0,
+  featuredCases: [],
   message: '正在加载公开案例…'
 });
 
 const failedGallery = Object.freeze({
   status: 'error',
-  cases: [],
+  totalCases: 0,
+  featuredCases: [],
   message: '公开案例加载失败，请重试。'
 });
 
@@ -52,10 +53,16 @@ export default function PublicHomePage({ loadGallery = defaultLoadGallery }) {
       </div>
     );
   } else if (gallery.status === 'ready') {
-    galleryStatus = <p>已加载 {gallery.cases.length} 个公开案例。</p>;
+    galleryStatus = <p>已收录 {gallery.totalCases} 个公开案例。</p>;
   } else {
     galleryStatus = <p>{gallery.message}</p>;
   }
 
-  return <HomePage galleryStatus={galleryStatus} cases={gallery.cases} />;
+  return (
+    <HomePage
+      galleryStatus={galleryStatus}
+      totalCases={gallery.totalCases}
+      featuredCases={gallery.featuredCases}
+    />
+  );
 }

@@ -1,3 +1,5 @@
+// 历史快照：此文件仅保留为旧版实现的对照参考，属于非运行时代码。
+// 当前站点入口已迁移到 src/main.jsx + src/app/router.jsx，请勿在新功能中继续接入本文件。
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {

@@ -16,6 +16,7 @@ const migration = readFileSync(fileURLToPath(new URL(
 )), 'utf8');
 const callbackSource = readFileSync(fileURLToPath(new URL('../generation/callback.js', import.meta.url)), 'utf8');
 const statusSource = readFileSync(fileURLToPath(new URL('../generation/status.js', import.meta.url)), 'utf8');
+const historySource = readFileSync(fileURLToPath(new URL('../generation/history.js', import.meta.url)), 'utf8');
 
 function settlementClient() {
   const calls = [];
@@ -166,4 +167,8 @@ test('migration, callback verification and status ownership contracts remain pre
   assert.match(migration, /create unique index[\s\S]*\(provider, provider_task_id\)/i);
   assert.match(callbackSource, /reconcileApimartCallback\([\s\S]*apiKey: config\.apiKey/i);
   assert.match(statusSource, /findPlatformGeneration\(auth\.client, taskId, auth\.user\.id\)/i);
+  assert.match(statusSource, /getSessionContext\(req\)/i);
+  assert.doesNotMatch(statusSource, /getAuthContext\(req\)/i);
+  assert.match(historySource, /getSessionContext\(req\)/i);
+  assert.doesNotMatch(historySource, /getAuthContext\(req\)/i);
 });

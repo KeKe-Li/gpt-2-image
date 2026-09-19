@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { readJsonBody, readRawBody } from './http.js';
 
 const STRIPE_API_VERSION = '2026-02-25.clover';
 const DEFAULT_APP_URL = 'https://gpt-image2.canghe.ai';
@@ -25,30 +26,7 @@ export function getAppUrl(req) {
   const protocol = req?.headers?.['x-forwarded-proto'] || 'https';
   return host ? `${protocol}://${host}` : DEFAULT_APP_URL;
 }
-
-export async function readJsonBody(req) {
-  if (Buffer.isBuffer(req.body)) return JSON.parse(req.body.toString('utf8') || '{}');
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
-
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(chunk);
-  }
-  const raw = Buffer.concat(chunks).toString('utf8');
-  return raw ? JSON.parse(raw) : {};
-}
-
-export async function readRawBody(req) {
-  if (Buffer.isBuffer(req.body)) return req.body;
-  if (typeof req.body === 'string') return Buffer.from(req.body, 'utf8');
-
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-  return Buffer.concat(chunks);
-}
+export { readJsonBody, readRawBody };
 
 function normalizeCurrency(value) {
   return String(value || 'usd').toLowerCase();

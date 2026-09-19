@@ -1,8 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
+  localeFromPath,
   pathWithLocale,
   resolveLocale
 } from '../../lib/i18n';
@@ -37,8 +38,8 @@ function readStoredLocale() {
  * 同步 <html lang>、canonical 与 hreflang，并提供语言感知的路径构造器。
  */
 export function LocaleProvider({ children }) {
-  const params = useParams();
-  const pathLocale = SUPPORTED_LOCALES.includes(params.locale) ? params.locale : undefined;
+  const location = useLocation();
+  const pathLocale = localeFromPath(location.pathname) || undefined;
 
   const locale = useMemo(() => {
     const browserLanguages =
@@ -82,11 +83,16 @@ export function LocaleProvider({ children }) {
     };
 
     upsertLink('canonical', null, `${base}${pathname}${search}`);
+    const alternateLinks = document.head.querySelectorAll('link[rel="alternate"][hreflang]');
+    if (!pathLocale) {
+      alternateLinks.forEach((link) => link.remove());
+      return;
+    }
     for (const supported of SUPPORTED_LOCALES) {
       upsertLink('alternate', supported, `${base}${pathWithLocale(supported, pathname)}`);
     }
     upsertLink('alternate', 'x-default', `${base}${pathWithLocale(DEFAULT_LOCALE, pathname)}`);
-  }, [locale, pathLocale]);
+  }, [locale, location.pathname, location.search, pathLocale]);
 
   const value = useMemo(() => ({ locale, setLocale, localizedPath }), [locale, setLocale, localizedPath]);
 

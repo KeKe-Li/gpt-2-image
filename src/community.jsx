@@ -1,3 +1,5 @@
+// 旧社群实现：此文件仅供 legacy main 历史快照内部引用，属于非运行时代码。
+// 当前运行中的公开站社群页面位于 src/features/community/CommunityPage.jsx。
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,

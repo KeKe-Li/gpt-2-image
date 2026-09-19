@@ -93,7 +93,7 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
   const handleSignOut = async () => {
     try {
       await api.signOut();
-      window.location.assign('/');
+      window.location.assign(localizedPath('/'));
     } catch {
       setFavError('退出登录失败，请重试。');
     }

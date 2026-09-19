@@ -5,13 +5,9 @@ import {
   getGenerationResponseUser,
   settlePlatformGeneration
 } from '../_lib/generation.js';
-import { getAuthContext } from '../_lib/supabase.js';
+import { json, methodNotAllowed } from '../_lib/http.js';
+import { getSessionContext } from '../_lib/supabase.js';
 import { isValidApimartTaskId } from '../../shared/apimart.js';
-
-function json(res, status, payload) {
-  res.setHeader('Cache-Control', 'no-store');
-  res.status(status).json(payload);
-}
 
 function statusForError(error) {
   if (error?.code === 'APIMART_RATE_LIMITED') return 429;
@@ -29,10 +25,9 @@ export function publicStatusErrorCode(error) {
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
+    return methodNotAllowed(res, 'GET');
   }
-  const auth = await getAuthContext(req);
+  const auth = await getSessionContext(req);
   if (auth.error) {
     return json(res, auth.status || 401, { ok: false, error: auth.error, loginRequired: true });
   }
