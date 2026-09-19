@@ -111,8 +111,8 @@ export function normalizeProfile(row, membership = null) {
   };
 }
 
-export async function ensureProfileForUser(user) {
-  const client = getSupabaseAdminClient();
+export async function ensureProfileForUser(user, options = {}) {
+  const { client = getSupabaseAdminClient(), includeMembership = true } = options;
   if (!client || !user?.id) throw new Error('Supabase is not configured');
 
   const { data: existingProfile, error: selectError } = await client
@@ -131,12 +131,14 @@ export async function ensureProfileForUser(user) {
     .single();
 
   if (error) throw error;
-  const membership = await getMembershipForUser(client, user.id).catch(() => null);
+  const membership = includeMembership
+    ? await getMembershipForUser(client, user.id).catch(() => null)
+    : null;
   return normalizeProfile(data, membership);
 }
 
-export async function getProfileById(userId) {
-  const client = getSupabaseAdminClient();
+export async function getProfileById(userId, options = {}) {
+  const { client = getSupabaseAdminClient(), includeMembership = true } = options;
   if (!client || !userId) return null;
 
   const { data, error } = await client
@@ -146,13 +148,14 @@ export async function getProfileById(userId) {
     .maybeSingle();
 
   if (error) throw error;
-  const membership = await getMembershipForUser(client, userId).catch(() => null);
+  const membership = includeMembership
+    ? await getMembershipForUser(client, userId).catch(() => null)
+    : null;
   return normalizeProfile(data, membership);
 }
 
-export async function getAuthContext(req, options = {}) {
-  const { allowAnonymous = false } = options;
-  const client = getSupabaseAdminClient();
+export async function getSessionContext(req, options = {}) {
+  const { allowAnonymous = false, client = getSupabaseAdminClient() } = options;
   if (!client) {
     return { error: 'SERVER_NOT_CONFIGURED', status: 500 };
   }
@@ -169,12 +172,26 @@ export async function getAuthContext(req, options = {}) {
     return { error: 'AUTH_REQUIRED', status: 401 };
   }
 
+  return { user: data.user, token, client };
+}
+
+export async function getAuthContext(req, options = {}) {
+  const {
+    allowAnonymous = false,
+    client = getSupabaseAdminClient(),
+    resolveProfile = ensureProfileForUser
+  } = options;
+  const session = await getSessionContext(req, { allowAnonymous, client });
+  if (session.error || !session.user) {
+    return { ...session, profile: null };
+  }
+
   try {
-    const profile = await ensureProfileForUser(data.user);
-    return { user: data.user, profile, token, client };
+    const profile = await resolveProfile(session.user, { client: session.client });
+    return { ...session, profile };
   } catch (profileError) {
     console.warn('Failed to ensure Supabase profile', {
-      userId: data.user.id,
+      userId: session.user.id,
       message: String(profileError?.message || 'unknown').slice(0, 240)
     });
     return { error: 'SERVER_NOT_CONFIGURED', status: 500 };

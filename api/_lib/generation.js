@@ -2,7 +2,7 @@ import { profileWithAccountExtras } from './account.js';
 import { getProfileById } from './supabase.js';
 
 export async function getGenerationResponseUser(client, userId) {
-  const profile = await getProfileById(userId).catch(() => null);
+  const profile = await getProfileById(userId, { client }).catch(() => null);
   if (!profile) return null;
   try {
     return await profileWithAccountExtras(client, profile);

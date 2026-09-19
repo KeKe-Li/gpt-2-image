@@ -1,4 +1,4 @@
-import { getAuthContext } from '../_lib/supabase.js';
+import { getSessionContext } from '../_lib/supabase.js';
 
 function json(res, status, payload) {
   res.setHeader('Cache-Control', 'no-store');
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
   }
 
-  const auth = await getAuthContext(req);
+  const auth = await getSessionContext(req);
   if (auth.error) {
     return json(res, auth.status || 401, { ok: false, error: auth.error, loginRequired: true });
   }
