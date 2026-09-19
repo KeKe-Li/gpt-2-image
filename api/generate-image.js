@@ -1,25 +1,11 @@
 import { getAuthContext, isSupabaseServerConfigured } from './_lib/supabase.js';
 import { getApimartConfig, submitApimartGeneration } from './_lib/apimart.js';
 import { getGenerationResponseUser } from './_lib/generation.js';
+import { json, methodNotAllowed, readJsonBody } from './_lib/http.js';
 import { APIMART_MAX_PROMPT_LENGTH } from '../shared/apimart.js';
-
-function json(res, status, payload) {
-  res.setHeader('Cache-Control', 'no-store');
-  res.status(status).json(payload);
-}
 
 function isServerConfigured() {
   return getApimartConfig().configured && isSupabaseServerConfigured();
-}
-
-async function readBody(req) {
-  if (Buffer.isBuffer(req.body)) return JSON.parse(req.body.toString('utf8') || '{}');
-  if (req.body && typeof req.body === 'object') return req.body;
-  if (typeof req.body === 'string') return JSON.parse(req.body || '{}');
-  const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
-  const raw = Buffer.concat(chunks).toString('utf8');
-  return raw ? JSON.parse(raw) : {};
 }
 
 function normalizeReservation(data) {
@@ -79,8 +65,7 @@ export function publicErrorStatus(errorCode) {
 
 export default async function handler(req, res) {
   if (!['GET', 'POST'].includes(req.method)) {
-    res.setHeader('Allow', 'GET, POST');
-    return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
+    return methodNotAllowed(res, 'GET, POST');
   }
   if (!isServerConfigured()) {
     return json(res, 500, { ok: false, error: 'SERVER_NOT_CONFIGURED' });
@@ -108,7 +93,7 @@ export default async function handler(req, res) {
 
   let body;
   try {
-    body = await readBody(req);
+    body = await readJsonBody(req);
   } catch {
     return json(res, 400, { ok: false, error: 'INVALID_PROMPT' });
   }
