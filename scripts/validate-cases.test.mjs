@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { validateCasesData } from './validate-cases.mjs';
+import { validateCasesData, validateHomeSummaryPayload } from './validate-cases.mjs';
 
 const validPayload = {
   totalCases: 2,
@@ -74,6 +74,27 @@ describe('cases-index.json shape', () => {
       image: '/images/case1.jpg',
       promptPreview: 'preview',
       category: 'A'
+    });
+  });
+});
+
+describe('home-summary.json shape', () => {
+  test('首页摘要至少包含总数与精选案例字段', () => {
+    const summaryPayload = {
+      totalCases: 1,
+      featuredCases: [{
+        id: 527,
+        title: 'Rio 旅行票据纸雕立体海报',
+        image: '/images/case527.jpg',
+        category: 'Posters & Typography'
+      }]
+    };
+    expect(validateHomeSummaryPayload(summaryPayload)).toEqual({
+      ok: true,
+      totalCases: 1,
+      featuredCases: 1,
+      duplicateIds: [],
+      invalidCases: []
     });
   });
 });

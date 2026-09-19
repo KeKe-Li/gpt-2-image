@@ -28,4 +28,5 @@ node_modules/
 dist/
 output/
 data/cases-index.json
+data/home-summary.json
 data/cases/

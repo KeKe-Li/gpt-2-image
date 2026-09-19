@@ -6,6 +6,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const docsDir = join(root, 'docs');
 const outFile = join(root, 'data', 'cases.json');
 const outIndexFile = join(root, 'data', 'cases-index.json');
+const outHomeSummaryFile = join(root, 'data', 'home-summary.json');
 const outCaseDetailsDir = join(root, 'data', 'cases');
 const styleLibraryFile = join(root, 'data', 'style-library.json');
 const styleLibrary = JSON.parse(readFileSync(styleLibraryFile, 'utf8'));
@@ -23,6 +24,7 @@ const featuredIds = new Set([
   1, 2, 6, 17, 166, 310, 330, 334, 338, 341, 344, 346, 350, 353, 354, 359, 360,
   361, 362, 365, 370, 373, 375, 376, 377, 378
 ]);
+const homeFeaturedIds = [527, 523, 510];
 
 function cleanText(value = '') {
   return value
@@ -214,6 +216,30 @@ const indexPayload = {
 
 mkdirSync(dirname(outIndexFile), { recursive: true });
 writeFileSync(outIndexFile, `${JSON.stringify(indexPayload, null, 2)}\n`);
+
+const casesById = new Map(cases.map((item) => [item.id, item]));
+const homeFeaturedCases = [
+  ...homeFeaturedIds.map((id) => casesById.get(id)).filter(Boolean),
+  ...cases.filter((item) => item.featured && !homeFeaturedIds.includes(item.id))
+].slice(0, 6);
+
+const homeSummaryPayload = {
+  repository: payload.repository,
+  totalCases: payload.totalCases,
+  featuredCases: homeFeaturedCases
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      image: item.image,
+      imageAlt: item.imageAlt,
+      category: item.category,
+      sourceLabel: item.sourceLabel,
+      sourceUrl: item.sourceUrl,
+      githubUrl: item.githubUrl
+    }))
+};
+
+writeFileSync(outHomeSummaryFile, `${JSON.stringify(homeSummaryPayload, null, 2)}\n`);
 
 // 案例详情：按 ID 拆分 prompt，点开详情时按需加载。
 mkdirSync(outCaseDetailsDir, { recursive: true });

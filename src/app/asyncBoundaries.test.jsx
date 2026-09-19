@@ -36,8 +36,14 @@ describe('公开数据加载边界', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('正在加载公开案例…');
     await waitFor(() => expect(finishLoading).toBeTypeOf('function'));
-    finishLoading({ status: 'ready', cases: [{ id: 1 }], message: '' });
-    expect(await screen.findByText('已加载 1 个公开案例。')).toBeInTheDocument();
+    finishLoading({
+      status: 'ready',
+      totalCases: 1,
+      featuredCases: [{ id: 527, title: '示例案例', image: '/images/case527.jpg', category: 'Posters & Typography' }],
+      message: ''
+    });
+    expect(await screen.findByText('已收录 1 个公开案例。')).toBeInTheDocument();
+    expect(screen.getByText('示例案例')).toBeInTheDocument();
   });
 
   test('Promise rejection 会进入可重试错误状态', async () => {
@@ -87,7 +93,7 @@ describe('公开数据加载边界', () => {
     await waitFor(() => expect(capturedSignal).toBeInstanceOf(AbortSignal));
     view.unmount();
     expect(capturedSignal.aborted).toBe(true);
-    finishLoading({ status: 'ready', cases: [], message: '' });
+    finishLoading({ status: 'ready', totalCases: 0, featuredCases: [], message: '' });
   });
 });
 

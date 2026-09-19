@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const REQUIRED_FIELDS = ['id', 'title', 'image', 'prompt', 'category'];
 const INDEX_REQUIRED_FIELDS = ['id', 'title', 'image', 'promptPreview', 'category', 'styles', 'scenes'];
+const HOME_SUMMARY_REQUIRED_FIELDS = ['id', 'title', 'image', 'category'];
 
 function validateIndexPayload(payload) {
   const cases = Array.isArray(payload?.cases) ? payload.cases : [];
@@ -28,6 +29,34 @@ function validateIndexPayload(payload) {
     ok: countMatches && duplicateIds.length === 0 && invalidCases.length === 0,
     totalCases: cases.length,
     declaredTotal: Number.isFinite(declaredTotal) ? declaredTotal : cases.length,
+    duplicateIds,
+    invalidCases
+  };
+}
+
+export function validateHomeSummaryPayload(payload) {
+  const featuredCases = Array.isArray(payload?.featuredCases) ? payload.featuredCases : [];
+  const invalidCases = [];
+  const ids = new Set();
+  const duplicateIds = [];
+
+  for (const item of featuredCases) {
+    if (ids.has(item.id)) duplicateIds.push(item.id);
+    ids.add(item.id);
+    const missingField = HOME_SUMMARY_REQUIRED_FIELDS.some(
+      (field) => item[field] === undefined || item[field] === null || item[field] === ''
+    );
+    if (missingField) invalidCases.push(item.id);
+  }
+
+  const declaredTotal = Number(payload?.totalCases);
+  return {
+    ok: Number.isFinite(declaredTotal)
+      && declaredTotal >= featuredCases.length
+      && duplicateIds.length === 0
+      && invalidCases.length === 0,
+    totalCases: Number.isFinite(declaredTotal) ? declaredTotal : 0,
+    featuredCases: featuredCases.length,
     duplicateIds,
     invalidCases
   };
@@ -116,6 +145,7 @@ function main() {
   console.log(report.ok ? '结果: 通过 ✅' : '结果: 失败 ❌');
 
   let indexReport = null;
+  let homeSummaryReport = null;
   try {
     const indexPayload = JSON.parse(readFileSync(join(root, 'data', 'cases-index.json'), 'utf8'));
     indexReport = validateIndexPayload(indexPayload);
@@ -129,6 +159,19 @@ function main() {
     indexReport = null;
   }
 
+  try {
+    const homeSummaryPayload = JSON.parse(readFileSync(join(root, 'data', 'home-summary.json'), 'utf8'));
+    homeSummaryReport = validateHomeSummaryPayload(homeSummaryPayload);
+    console.log('首页摘要校验报告:');
+    console.log(`  总案例数: ${homeSummaryReport.totalCases}`);
+    console.log(`  精选案例数: ${homeSummaryReport.featuredCases}`);
+    console.log(`  重复 ID: ${homeSummaryReport.duplicateIds.length}`);
+    console.log(`  字段缺失案例: ${homeSummaryReport.invalidCases.length}`);
+    console.log(homeSummaryReport.ok ? '结果: 通过 ✅' : '结果: 失败 ❌');
+  } catch {
+    homeSummaryReport = null;
+  }
+
   if (!report.ok) {
     if (report.duplicateIds.length) console.error('  重复 ID:', report.duplicateIds.slice(0, 20));
     if (report.invalidCases.length) console.error('  字段缺失:', report.invalidCases.slice(0, 20));
@@ -140,6 +183,12 @@ function main() {
   if (indexReport && !indexReport.ok) {
     if (indexReport.duplicateIds.length) console.error('  索引重复 ID:', indexReport.duplicateIds.slice(0, 20));
     if (indexReport.invalidCases.length) console.error('  索引字段缺失:', indexReport.invalidCases.slice(0, 20));
+    process.exit(1);
+  }
+
+  if (homeSummaryReport && !homeSummaryReport.ok) {
+    if (homeSummaryReport.duplicateIds.length) console.error('  首页摘要重复 ID:', homeSummaryReport.duplicateIds.slice(0, 20));
+    if (homeSummaryReport.invalidCases.length) console.error('  首页摘要字段缺失:', homeSummaryReport.invalidCases.slice(0, 20));
     process.exit(1);
   }
 }
