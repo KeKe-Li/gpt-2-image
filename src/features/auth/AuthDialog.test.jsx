@@ -1,7 +1,9 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import AuthDialog from './AuthDialog';
+import { LocaleProvider } from '../i18n/LocaleProvider';
 
 afterEach(cleanup);
 
@@ -18,10 +20,18 @@ function makeApi(overrides = {}) {
   };
 }
 
+function renderAuthDialog(ui, { path = '/zh-CN' } = {}) {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <LocaleProvider>{ui}</LocaleProvider>
+    </MemoryRouter>
+  );
+}
+
 describe('AuthDialog', () => {
   test('未配置时提示尚未配置并禁用登录操作', () => {
     const api = makeApi({ capability: { configured: false, emailMode: 'magic_link', googleEnabled: false } });
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     expect(screen.getByText(/登录服务尚未配置/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /发送登录邮件|发送登录链接|发送验证码/ })).toBeDisabled();
@@ -29,7 +39,7 @@ describe('AuthDialog', () => {
 
   test('魔法链接模式提交后提示已发送邮件', async () => {
     const api = makeApi();
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     fireEvent.change(screen.getByLabelText('邮箱地址'), { target: { value: 'a@b.com' } });
     fireEvent.click(screen.getByRole('button', { name: /发送登录链接/ }));
@@ -40,7 +50,7 @@ describe('AuthDialog', () => {
 
   test('验证码模式提交后可输入验证码并校验', async () => {
     const api = makeApi({ capability: { configured: true, emailMode: 'code', googleEnabled: true } });
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     fireEvent.change(screen.getByLabelText('邮箱地址'), { target: { value: 'a@b.com' } });
     fireEvent.click(screen.getByRole('button', { name: /发送验证码/ }));
@@ -55,7 +65,7 @@ describe('AuthDialog', () => {
 
   test('点击 Google 按钮发起 OAuth', async () => {
     const api = makeApi();
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     fireEvent.click(screen.getByRole('button', { name: /使用 Google 登录/ }));
     await waitFor(() => expect(api.signInWithGoogle).toHaveBeenCalled());
@@ -63,7 +73,7 @@ describe('AuthDialog', () => {
 
   test('启用密码登录时可切换到密码模式并提交登录', async () => {
     const api = makeApi({ capability: { configured: true, emailMode: 'magic_link', googleEnabled: true, passwordEnabled: true } });
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     fireEvent.click(screen.getByRole('button', { name: '密码登录' }));
     fireEvent.change(screen.getByLabelText('邮箱地址'), { target: { value: 'a@b.com' } });
@@ -75,7 +85,7 @@ describe('AuthDialog', () => {
 
   test('发送失败时展示错误信息', async () => {
     const api = makeApi({ sendEmailOtp: vi.fn().mockRejectedValue(new Error('发送登录邮件失败。')) });
-    render(<AuthDialog api={api} onClose={() => {}} />);
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />);
 
     fireEvent.change(screen.getByLabelText('邮箱地址'), { target: { value: 'a@b.com' } });
     fireEvent.click(screen.getByRole('button', { name: /发送登录链接/ }));
@@ -85,8 +95,21 @@ describe('AuthDialog', () => {
 
   test('按关闭按钮触发 onClose', () => {
     const onClose = vi.fn();
-    render(<AuthDialog api={makeApi()} onClose={onClose} />);
+    renderAuthDialog(<AuthDialog api={makeApi()} onClose={onClose} />);
     fireEvent.click(screen.getByRole('button', { name: '关闭登录' }));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  test('英文路径下展示英文标题与主操作文案', async () => {
+    const api = makeApi({ capability: { configured: true, emailMode: 'magic_link', googleEnabled: true, passwordEnabled: true } });
+    renderAuthDialog(<AuthDialog api={api} onClose={() => {}} />, { path: '/en' });
+
+    expect(screen.getByRole('heading', { name: 'Sign in / Sign up' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Email sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Password sign in' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Send sign-in link' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use Google to continue' }));
+    await waitFor(() => expect(api.signInWithGoogle).toHaveBeenCalled());
   });
 });

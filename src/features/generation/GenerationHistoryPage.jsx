@@ -49,12 +49,12 @@ const copy = {
   }
 };
 
-function formatTime(value) {
+function formatTime(value, locale) {
   if (!value) return '';
   try {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '';
-    return date.toLocaleString();
+    return date.toLocaleString(locale || undefined);
   } catch {
     return '';
   }
@@ -158,7 +158,7 @@ export default function GenerationHistoryPage() {
             <li key={item.id} className="history-item">
               <div className="history-item__meta">
                 <span className={`history-badge history-badge--${item.status}`}>{statusLabel(t, item)}</span>
-                <span className="history-item__time">{formatTime(item.createdAt)}</span>
+                <span className="history-item__time">{formatTime(item.createdAt, locale)}</span>
               </div>
               <div className="history-item__body">
                 <p className="history-item__title">

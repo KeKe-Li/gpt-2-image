@@ -1,17 +1,37 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../auth/SessionProvider';
+import { LocaleProvider } from '../i18n/LocaleProvider';
 import GenerationPage from './GenerationPage';
 
 afterEach(cleanup);
 
-function renderWithSession(ui, { user = null } = {}) {
+function createDeferred() {
+  let resolve;
+  let reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
+function renderWithSession(ui, { user = null, path = '/zh-CN/workspace' } = {}) {
   const sessionAdapter = { restore: () => Promise.resolve({ user }) };
   return render(
-    <MemoryRouter>
-      <SessionProvider sessionAdapter={sessionAdapter}>{ui}</SessionProvider>
+    <MemoryRouter initialEntries={[path]}>
+      <Routes>
+        <Route
+          path="/:locale/workspace"
+          element={(
+            <LocaleProvider>
+              <SessionProvider sessionAdapter={sessionAdapter}>{ui}</SessionProvider>
+            </LocaleProvider>
+          )}
+        />
+      </Routes>
     </MemoryRouter>
   );
 }
@@ -62,5 +82,39 @@ describe('GenerationPage', () => {
     fireEvent.click(screen.getByRole('button', { name: '生成图片' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/额度/);
+  });
+
+  test('英文 locale 下显示英文 loading 与未配置文案', async () => {
+    const deferred = createDeferred();
+    const api = makeApi({ fetchCapability: vi.fn().mockImplementation(() => deferred.promise) });
+    renderWithSession(<GenerationPage api={api} />, { path: '/en/workspace' });
+
+    expect(screen.getByRole('status')).toHaveTextContent('Checking generation service…');
+
+    deferred.resolve({ configured: false });
+    expect(await screen.findByText('Image generation service is not configured.')).toBeInTheDocument();
+    expect(screen.getByText('You can still browse all public cases and copy original prompts.')).toBeInTheDocument();
+  });
+
+  test('英文 locale 下未登录与生成中状态显示英文文案', async () => {
+    const apiForAnonymous = makeApi();
+    renderWithSession(<GenerationPage api={apiForAnonymous} />, { user: null, path: '/en/workspace' });
+    expect(await screen.findByText('Sign in to generate images, save history, and manage credits.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sign in / Sign up' })).toBeInTheDocument();
+
+    cleanup();
+
+    const pollDeferred = createDeferred();
+    const apiForPolling = makeApi({
+      poll: vi.fn().mockImplementation(() => pollDeferred.promise)
+    });
+    renderWithSession(<GenerationPage api={apiForPolling} />, { user: { id: 'u1', email: 'a@b.com' }, path: '/en/workspace' });
+
+    fireEvent.change(await screen.findByLabelText('Prompt'), { target: { value: 'A corgi in a hat' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Generate image' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Generating, please wait…');
+    pollDeferred.resolve({ status: 'completed', image: '/images/case1.jpg', cost: 0.01 });
+    await waitFor(() => expect(screen.getByRole('img', { name: 'Generated result' })).toBeInTheDocument());
   });
 });

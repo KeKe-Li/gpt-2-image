@@ -26,10 +26,22 @@ export function localeFromPath(pathname = '') {
  */
 export function pathWithLocale(locale, pathname = '/') {
   const targetLocale = isSupported(locale) ? locale : DEFAULT_LOCALE;
-  const segments = pathname.replace(/^\/+/, '').split('/').filter(Boolean);
+  const value = String(pathname || '/');
+  const hashIndex = value.indexOf('#');
+  const searchIndex = value.indexOf('?');
+  const cutIndex =
+    hashIndex === -1
+      ? searchIndex
+      : searchIndex === -1
+        ? hashIndex
+        : Math.min(searchIndex, hashIndex);
+  const basePath = cutIndex >= 0 ? value.slice(0, cutIndex) : value;
+  const suffix = cutIndex >= 0 ? value.slice(cutIndex) : '';
+  const segments = basePath.replace(/^\/+/, '').split('/').filter(Boolean);
   if (isSupported(segments[0])) segments.shift();
   const rest = segments.join('/');
-  return rest ? `/${targetLocale}/${rest}` : `/${targetLocale}`;
+  const nextPath = rest ? `/${targetLocale}/${rest}` : `/${targetLocale}`;
+  return `${nextPath}${suffix}`;
 }
 
 /**

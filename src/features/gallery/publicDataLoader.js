@@ -20,7 +20,7 @@ export async function fetchHomeSummary({ signal, fetchImpl } = {}) {
   };
 }
 
-export async function loadPublicGalleryData({ loadSummary } = {}) {
+export async function loadPublicGalleryData({ loadSummary, signal } = {}) {
   if (typeof loadSummary !== 'function') {
     return {
       status: 'unconfigured',
@@ -30,7 +30,7 @@ export async function loadPublicGalleryData({ loadSummary } = {}) {
     };
   }
 
-  const summary = await loadSummary();
+  const summary = await loadSummary({ signal });
   return {
     status: 'ready',
     totalCases: Number(summary?.totalCases || 0),

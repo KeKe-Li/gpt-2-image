@@ -4,6 +4,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import PublicHomePage from './pages/PublicHomePage';
 import { SessionProvider, useSession } from '../features/auth/SessionProvider';
+import { LocaleProvider } from '../features/i18n/LocaleProvider';
 
 afterEach(cleanup);
 
@@ -21,6 +22,14 @@ function SessionState() {
   );
 }
 
+function renderPublicHomePage(ui, { path = '/zh-CN' } = {}) {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <LocaleProvider>{ui}</LocaleProvider>
+    </MemoryRouter>
+  );
+}
+
 describe('公开数据加载边界', () => {
   test('加载过程从 loading 进入 ready', async () => {
     let finishLoading;
@@ -28,11 +37,7 @@ describe('公开数据加载边界', () => {
       finishLoading = resolve;
     });
 
-    render(
-      <MemoryRouter>
-        <PublicHomePage loadGallery={loadGallery} />
-      </MemoryRouter>
-    );
+    renderPublicHomePage(<PublicHomePage loadGallery={loadGallery} />);
 
     expect(screen.getByRole('status')).toHaveTextContent('正在加载公开案例…');
     await waitFor(() => expect(finishLoading).toBeTypeOf('function'));
@@ -53,11 +58,7 @@ describe('公开数据加载边界', () => {
       return Promise.reject(new Error('加载失败'));
     };
 
-    render(
-      <MemoryRouter>
-        <PublicHomePage loadGallery={loadGallery} />
-      </MemoryRouter>
-    );
+    renderPublicHomePage(<PublicHomePage loadGallery={loadGallery} />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('公开案例加载失败，请重试。');
     fireEvent.click(screen.getByRole('button', { name: '重新加载公开案例' }));
@@ -65,11 +66,7 @@ describe('公开数据加载边界', () => {
   });
 
   test('同步抛错会进入错误状态', async () => {
-    render(
-      <MemoryRouter>
-        <PublicHomePage loadGallery={() => { throw new Error('同步失败'); }} />
-      </MemoryRouter>
-    );
+    renderPublicHomePage(<PublicHomePage loadGallery={() => { throw new Error('同步失败'); }} />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('公开案例加载失败，请重试。');
   });
@@ -84,16 +81,38 @@ describe('公开数据加载边界', () => {
       });
     };
 
-    const view = render(
-      <MemoryRouter>
-        <PublicHomePage loadGallery={loadGallery} />
-      </MemoryRouter>
-    );
+    const view = renderPublicHomePage(<PublicHomePage loadGallery={loadGallery} />);
 
     await waitFor(() => expect(capturedSignal).toBeInstanceOf(AbortSignal));
     view.unmount();
     expect(capturedSignal.aborted).toBe(true);
     finishLoading({ status: 'ready', totalCases: 0, featuredCases: [], message: '' });
+  });
+
+  test('英文路径下显示英文 loading / error / ready 文案', async () => {
+    let finishLoading;
+    const readyLoadGallery = vi.fn().mockImplementation(() => new Promise((resolve) => {
+        finishLoading = resolve;
+      }));
+
+    const view = renderPublicHomePage(<PublicHomePage loadGallery={readyLoadGallery} />, { path: '/en' });
+
+    expect(screen.getByRole('status')).toHaveTextContent('Loading public cases…');
+
+    await waitFor(() => expect(finishLoading).toBeTypeOf('function'));
+    finishLoading({
+      status: 'ready',
+      totalCases: 2,
+      featuredCases: [{ id: 527, title: 'Example case', image: '/images/case527.jpg', category: 'Posters & Typography' }],
+      message: ''
+    });
+
+    expect(await screen.findByText('Collected 2 public cases.')).toBeInTheDocument();
+
+    view.unmount();
+    renderPublicHomePage(<PublicHomePage loadGallery={() => Promise.reject(new Error('load failed'))} />, { path: '/en' });
+    expect(await screen.findByRole('alert')).toHaveTextContent('Failed to load public cases. Please retry.');
+    expect(screen.getByRole('button', { name: 'Reload public cases' })).toBeInTheDocument();
   });
 });
 

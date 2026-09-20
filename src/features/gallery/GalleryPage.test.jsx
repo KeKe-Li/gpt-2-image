@@ -24,11 +24,25 @@ const galleryData = {
   cases
 };
 
-function renderGallery(loadData = async () => galleryData, session = { user: null, accessToken: '' }) {
+function createDeferred() {
+  let resolve;
+  let reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
+function renderGallery(
+  loadData = async () => galleryData,
+  session = { user: null, accessToken: '' },
+  favoritesClient = undefined
+) {
   return render(
     <MemoryRouter initialEntries={['/zh-CN/cases']}>
       <SessionProvider sessionAdapter={{ restore: () => Promise.resolve(session) }}>
-        <GalleryPage loadData={loadData} />
+        <GalleryPage loadData={loadData} favoritesClient={favoritesClient} />
       </SessionProvider>
     </MemoryRouter>
   );
@@ -76,5 +90,43 @@ describe('GalleryPage', () => {
     const favoriteCall = fetchImpl.mock.calls.find(([url]) => url === '/api/favorites');
     expect(new Headers(favoriteCall[1].headers).get('Authorization')).toBe('Bearer gallery-token');
     fetchImpl.mockRestore();
+  });
+
+  test('旧收藏请求失败时不会回滚掉其他案例的较新乐观更新', async () => {
+    const removeDeferred = createDeferred();
+    const addDeferred = createDeferred();
+    const favoritesClient = {
+      fetchFavorites: vi.fn().mockResolvedValue({ caseIds: [1], loginRequired: false }),
+      removeFavorite: vi.fn().mockImplementation(() => removeDeferred.promise),
+      addFavorite: vi.fn().mockImplementation(() => addDeferred.promise),
+      toggleFavoriteSet: (ids, caseId) => (ids.includes(caseId) ? ids.filter((id) => id !== caseId) : [...ids, caseId])
+    };
+
+    renderGallery(
+      async () => ({
+        categories: ['Posters & Typography'],
+        styles: ['Realistic'],
+        scenes: ['Travel'],
+        cases: cases.slice(0, 2)
+      }),
+      { user: { id: 'user-1' }, accessToken: 'gallery-token' },
+      favoritesClient
+    );
+
+    const caseButtons = await screen.findAllByRole('button', { name: /查看案例/ });
+    fireEvent.click(caseButtons[0]);
+    expect(await screen.findByRole('button', { name: '已收藏' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '已收藏' }));
+    expect(screen.getByRole('button', { name: '收藏' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '关闭案例详情' }));
+    fireEvent.click(caseButtons[1]);
+    fireEvent.click(await screen.findByRole('button', { name: '收藏' }));
+    expect(screen.getByRole('button', { name: '已收藏' })).toBeInTheDocument();
+
+    removeDeferred.reject(new Error('remove failed'));
+    await waitFor(() => expect(screen.getByRole('button', { name: '已收藏' })).toBeInTheDocument());
+
+    addDeferred.resolve({ ok: true });
   });
 });

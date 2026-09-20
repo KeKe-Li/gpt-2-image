@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLocale } from '../i18n/LocaleProvider';
 import { fetchCasePrompt, fetchGalleryData } from './gallery-data';
@@ -19,6 +20,12 @@ import './gallery.css';
 const EMPTY_DATA = Object.freeze({ categories: [], styles: [], scenes: [], cases: [] });
 export const INITIAL_VISIBLE_CASES = 48;
 const LOAD_MORE_CASES = 48;
+const defaultFavoritesClient = {
+  fetchFavorites,
+  addFavorite,
+  removeFavorite,
+  toggleFavoriteSet
+};
 
 const pageCopy = {
   'zh-CN': {
@@ -74,7 +81,7 @@ const pageCopy = {
  * 并以对话框展示案例详情（deep-link 参数 ?case=ID）。
  * @param {{loadData?: typeof fetchGalleryData}} props 允许注入数据加载器便于测试
  */
-export default function GalleryPage({ loadData = fetchGalleryData }) {
+export default function GalleryPage({ loadData = fetchGalleryData, favoritesClient = defaultFavoritesClient }) {
   const { locale } = useLocale();
   const t = pageCopy[locale] || pageCopy['zh-CN'];
   const session = useSession();
@@ -84,6 +91,7 @@ export default function GalleryPage({ loadData = fetchGalleryData }) {
   const [attempt, setAttempt] = useState(0);
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_CASES);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const favoriteMutationVersion = useRef(new Map());
 
   useEffect(() => {
     const controller = new AbortController();
@@ -125,7 +133,7 @@ export default function GalleryPage({ loadData = fetchGalleryData }) {
       return undefined;
     }
     let cancelled = false;
-    fetchFavorites({ accessToken: session.accessToken })
+    favoritesClient.fetchFavorites({ accessToken: session.accessToken })
       .then((result) => {
         if (!cancelled && !result.loginRequired) setFavoriteIds(result.caseIds);
       })
@@ -133,18 +141,27 @@ export default function GalleryPage({ loadData = fetchGalleryData }) {
     return () => {
       cancelled = true;
     };
-  }, [session.accessToken, session.user]);
+  }, [favoritesClient, session.accessToken, session.user]);
 
   const toggleFavorite = (caseItem) => {
     const caseId = Number(caseItem.id);
     const wasFavorite = favoriteIds.includes(caseId);
-    const previous = favoriteIds;
-    setFavoriteIds((ids) => toggleFavoriteSet(ids, caseId)); // 乐观更新
+    const nextVersion = (favoriteMutationVersion.current.get(caseId) || 0) + 1;
+    favoriteMutationVersion.current.set(caseId, nextVersion);
+    setFavoriteIds((ids) => favoritesClient.toggleFavoriteSet(ids, caseId)); // 乐观更新
     const requestOptions = { accessToken: session.accessToken };
     const action = wasFavorite
-      ? removeFavorite(caseId, requestOptions)
-      : addFavorite(caseId, requestOptions);
-    action.catch(() => setFavoriteIds(previous)); // 失败回滚
+      ? favoritesClient.removeFavorite(caseId, requestOptions)
+      : favoritesClient.addFavorite(caseId, requestOptions);
+    action.catch(() => {
+      if (favoriteMutationVersion.current.get(caseId) !== nextVersion) return;
+      setFavoriteIds((ids) => {
+        if (wasFavorite) {
+          return ids.includes(caseId) ? ids : [...ids, caseId];
+        }
+        return ids.filter((id) => id !== caseId);
+      });
+    });
   };
 
   const selectedId = searchParams.get('case');
