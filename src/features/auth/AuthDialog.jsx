@@ -1,10 +1,100 @@
 import { useEffect, useRef, useState } from 'react';
 import { auth as defaultAuth } from './authClient';
+import { useLocale } from '../i18n/LocaleProvider';
 import './auth.css';
+
+const copy = {
+  'zh-CN': {
+    dialogTitle: '登录 / 注册',
+    close: '关闭登录',
+    unavailable: '登录服务尚未配置，暂不可用。',
+    tabsLabel: '登录方式',
+    otpTab: '邮箱登录',
+    passwordTab: '密码登录',
+    passwordTabHint: '未启用密码登录（可通过 VITE_PASSWORD_AUTH_ENABLED=true 打开）',
+    emailLabel: '邮箱地址',
+    sendCode: '发送验证码',
+    sendLink: '发送登录链接',
+    divider: '或',
+    google: '使用 Google 登录',
+    sentLink: (email) => `已向 ${email} 发送登录链接，请查收邮件并点击完成登录。`,
+    resend: '重新发送',
+    changeEmail: '更换邮箱',
+    codeSent: (email) => `已向 ${email} 发送六位验证码。`,
+    codeLabel: '六位验证码',
+    verify: '验证并登录',
+    resendCode: '重新发送验证码',
+    editEmail: '修改邮箱',
+    resetSent: (email) => `已向 ${email} 发送重置密码邮件，请查收并按提示完成重置。`,
+    signupSent: (email) => `已向 ${email} 发送验证邮件，请先完成邮箱验证后再返回登录。`,
+    passwordLabel: '密码',
+    password2Label: '确认密码',
+    signIn: '登录',
+    signUpAndSignIn: '注册并登录',
+    backToSignIn: '返回登录',
+    sendReset: '发送重置邮件',
+    noAccount: '没有账号？去注册',
+    hasAccount: '已有账号？去登录',
+    forgotPassword: '忘记密码',
+    backToPassword: '返回密码登录',
+    errorEmailRequired: '请输入邮箱地址。',
+    errorSendFailed: '发送失败，请重试。',
+    errorVerifyFailed: '验证码校验失败。',
+    errorGoogleFailed: 'Google 登录失败。',
+    errorPasswordFailed: '密码登录失败。',
+    errorPasswordMismatch: '两次输入的密码不一致。',
+    errorSignupFailed: '注册失败。',
+    errorResetFailed: '重置密码邮件发送失败。'
+  },
+  en: {
+    dialogTitle: 'Sign in / Sign up',
+    close: 'Close sign-in dialog',
+    unavailable: 'Authentication is not configured yet.',
+    tabsLabel: 'Sign-in methods',
+    otpTab: 'Email sign in',
+    passwordTab: 'Password sign in',
+    passwordTabHint: 'Password sign-in is disabled. Enable it with VITE_PASSWORD_AUTH_ENABLED=true.',
+    emailLabel: 'Email address',
+    sendCode: 'Send code',
+    sendLink: 'Send sign-in link',
+    divider: 'or',
+    google: 'Use Google to continue',
+    sentLink: (email) => `A sign-in link was sent to ${email}. Check your inbox to continue.`,
+    resend: 'Resend',
+    changeEmail: 'Change email',
+    codeSent: (email) => `A six-digit code was sent to ${email}.`,
+    codeLabel: 'Six-digit code',
+    verify: 'Verify and sign in',
+    resendCode: 'Resend code',
+    editEmail: 'Edit email',
+    resetSent: (email) => `A password reset email was sent to ${email}.`,
+    signupSent: (email) => `A verification email was sent to ${email}. Verify your email before signing in.`,
+    passwordLabel: 'Password',
+    password2Label: 'Confirm password',
+    signIn: 'Sign in',
+    signUpAndSignIn: 'Sign up and sign in',
+    backToSignIn: 'Back to sign in',
+    sendReset: 'Send reset email',
+    noAccount: "Don't have an account? Sign up",
+    hasAccount: 'Already have an account? Sign in',
+    forgotPassword: 'Forgot password',
+    backToPassword: 'Back to password sign in',
+    errorEmailRequired: 'Please enter your email address.',
+    errorSendFailed: 'Failed to send. Please retry.',
+    errorVerifyFailed: 'Failed to verify the code.',
+    errorGoogleFailed: 'Google sign-in failed.',
+    errorPasswordFailed: 'Password sign-in failed.',
+    errorPasswordMismatch: 'The two passwords do not match.',
+    errorSignupFailed: 'Sign-up failed.',
+    errorResetFailed: 'Failed to send the reset email.'
+  }
+};
 
 // 登录对话框：邮箱 OTP（魔法链接 / 六位验证码）+ Google OAuth。
 // api 可注入便于测试；未配置时安全禁用登录操作。
 export default function AuthDialog({ api = defaultAuth, onClose }) {
+  const { locale } = useLocale();
+  const t = copy[locale] || copy['zh-CN'];
   const capability = api.capability || {
     configured: false,
     emailMode: 'magic_link',
@@ -32,7 +122,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
-  const emailButtonLabel = isCodeMode ? '发送验证码' : '发送登录链接';
+  const emailButtonLabel = isCodeMode ? t.sendCode : t.sendLink;
   const passwordEnabled = Boolean(capability.configured && capability.passwordEnabled);
   const otpEnabled = Boolean(capability.configured);
   const googleEnabled = Boolean(capability.configured && capability.googleEnabled);
@@ -46,7 +136,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
     if (!otpEnabled || busy) return;
     setError('');
     if (!email.trim()) {
-      setError('请输入邮箱地址。');
+      setError(t.errorEmailRequired);
       return;
     }
     setBusy(true);
@@ -54,7 +144,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
       await api.sendEmailOtp(email);
       setStage(isCodeMode ? 'code' : 'sent');
     } catch (err) {
-      setError(err?.message || '发送失败，请重试。');
+      setError(err?.message || t.errorSendFailed);
     } finally {
       setBusy(false);
     }
@@ -70,7 +160,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
       setStage('done');
       onClose?.({ signedIn: true });
     } catch (err) {
-      setError(err?.message || '验证码校验失败。');
+      setError(err?.message || t.errorVerifyFailed);
     } finally {
       setBusy(false);
     }
@@ -80,7 +170,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
     if (!otpEnabled || busy) return;
     setError('');
     if (!email.trim()) {
-      setError('请输入邮箱地址。');
+      setError(t.errorEmailRequired);
       return;
     }
     setBusy(true);
@@ -88,7 +178,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
       await api.sendEmailOtp(email);
       setStage(isCodeMode ? 'code' : 'sent');
     } catch (err) {
-      setError(err?.message || '发送失败，请重试。');
+      setError(err?.message || t.errorSendFailed);
     } finally {
       setBusy(false);
     }
@@ -107,7 +197,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
     try {
       await api.signInWithGoogle();
     } catch (err) {
-      setError(err?.message || 'Google 登录失败。');
+      setError(err?.message || t.errorGoogleFailed);
       setBusy(false);
     }
   };
@@ -121,7 +211,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
       await api.signInWithPassword?.(email, password);
       onClose?.({ signedIn: true });
     } catch (err) {
-      setError(err?.message || '密码登录失败。');
+      setError(err?.message || t.errorPasswordFailed);
     } finally {
       setBusy(false);
     }
@@ -132,20 +222,19 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
     if (!passwordEnabled || busy) return;
     setError('');
     if (password !== password2) {
-      setError('两次输入的密码不一致。');
+      setError(t.errorPasswordMismatch);
       return;
     }
     setBusy(true);
     try {
       const result = await api.signUpWithPassword?.(email, password);
-      // 部分 Supabase 配置会要求邮箱验证：此时 user 存在但 session 为空，不能算已登录。
       if (result?.session) {
         onClose?.({ signedIn: true, signedUp: true });
         return;
       }
       setPasswordStage('signup_sent');
     } catch (err) {
-      setError(err?.message || '注册失败。');
+      setError(err?.message || t.errorSignupFailed);
     } finally {
       setBusy(false);
     }
@@ -160,7 +249,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
       await api.sendPasswordResetEmail?.(email);
       setPasswordStage('reset_sent');
     } catch (err) {
-      setError(err?.message || '重置密码邮件发送失败。');
+      setError(err?.message || t.errorResetFailed);
     } finally {
       setBusy(false);
     }
@@ -178,21 +267,21 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
         <button
           type="button"
           className="auth-dialog__close"
-          aria-label="关闭登录"
+          aria-label={t.close}
           onClick={() => onClose?.()}
           ref={closeRef}
         >
           <span aria-hidden="true">×</span>
         </button>
 
-        <h2 id="auth-dialog-title">登录 / 注册</h2>
+        <h2 id="auth-dialog-title">{t.dialogTitle}</h2>
 
         {!capability.configured ? (
-          <p className="content-notice" role="status">登录服务尚未配置，暂不可用。</p>
+          <p className="content-notice" role="status">{t.unavailable}</p>
         ) : null}
 
         {capability.configured ? (
-          <div className="auth-dialog__tabs" role="tablist" aria-label="登录方式">
+          <div className="auth-dialog__tabs" role="tablist" aria-label={t.tabsLabel}>
             <button
               type="button"
               className="auth-tab"
@@ -202,7 +291,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
                 setError('');
               }}
             >
-              邮箱登录
+              {t.otpTab}
             </button>
             <button
               type="button"
@@ -216,16 +305,16 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
                 setError('');
               }}
               disabled={!passwordEnabled}
-              title={passwordEnabled ? '' : '未启用密码登录（可通过 VITE_PASSWORD_AUTH_ENABLED=true 打开）'}
+              title={passwordEnabled ? '' : t.passwordTabHint}
             >
-              密码登录
+              {t.passwordTab}
             </button>
           </div>
         ) : null}
 
         {stage === 'sent' ? (
           <>
-            <p className="auth-dialog__hint" role="status">已向 {email} 发送登录链接，请查收邮件并点击完成登录。</p>
+            <p className="auth-dialog__hint" role="status">{t.sentLink(email)}</p>
             <div className="auth-dialog__actions">
               <button
                 type="button"
@@ -233,10 +322,10 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
                 onClick={handleResendOtp}
                 disabled={busy}
               >
-                重新发送
+                {t.resend}
               </button>
               <button type="button" className="button button--quiet" onClick={handleChangeEmail} disabled={busy}>
-                更换邮箱
+                {t.changeEmail}
               </button>
             </div>
           </>
@@ -244,8 +333,8 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
 
         {mode === 'otp' && stage === 'code' ? (
           <form className="auth-dialog__form" onSubmit={handleVerify}>
-            <p className="auth-dialog__hint" role="status">已向 {email} 发送六位验证码。</p>
-            <label htmlFor="auth-code">六位验证码</label>
+            <p className="auth-dialog__hint" role="status">{t.codeSent(email)}</p>
+            <label htmlFor="auth-code">{t.codeLabel}</label>
             <input
               id="auth-code"
               inputMode="numeric"
@@ -257,7 +346,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
                 setCode(next);
               }}
             />
-            <button type="submit" className="button" disabled={busy}>验证并登录</button>
+            <button type="submit" className="button" disabled={busy}>{t.verify}</button>
             <div className="auth-dialog__actions">
               <button
                 type="button"
@@ -265,10 +354,10 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
                 onClick={handleResendOtp}
                 disabled={busy}
               >
-                重新发送验证码
+                {t.resendCode}
               </button>
               <button type="button" className="button button--quiet" onClick={handleChangeEmail} disabled={busy}>
-                修改邮箱
+                {t.editEmail}
               </button>
             </div>
           </form>
@@ -277,7 +366,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
         {mode === 'otp' && stage === 'email' ? (
           <>
             <form className="auth-dialog__form" onSubmit={handleSend}>
-              <label htmlFor="auth-email">邮箱地址</label>
+              <label htmlFor="auth-email">{t.emailLabel}</label>
               <input
                 id="auth-email"
                 type="email"
@@ -291,7 +380,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
               </button>
             </form>
 
-            <div className="auth-dialog__divider" aria-hidden="true">或</div>
+            <div className="auth-dialog__divider" aria-hidden="true">{t.divider}</div>
 
             <button
               type="button"
@@ -299,7 +388,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
               onClick={handleGoogle}
               disabled={!googleEnabled || busy}
             >
-              使用 Google 登录
+              {t.google}
             </button>
           </>
         ) : null}
@@ -310,7 +399,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
               className="auth-dialog__form"
               onSubmit={passwordStage === 'signup' ? handlePasswordSignUp : passwordStage === 'reset' ? handleSendReset : handlePasswordSignIn}
             >
-              <label htmlFor="auth-email-password">邮箱地址</label>
+              <label htmlFor="auth-email-password">{t.emailLabel}</label>
               <input
                 id="auth-email-password"
                 type="email"
@@ -321,18 +410,16 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
               />
 
               {passwordStage === 'reset_sent' ? (
-                <p className="auth-dialog__hint" role="status">已向 {email} 发送重置密码邮件，请查收并按提示完成重置。</p>
+                <p className="auth-dialog__hint" role="status">{t.resetSent(email)}</p>
               ) : null}
 
               {passwordStage === 'signup_sent' ? (
-                <p className="auth-dialog__hint" role="status">
-                  已向 {email} 发送验证邮件，请先完成邮箱验证后再返回登录。
-                </p>
+                <p className="auth-dialog__hint" role="status">{t.signupSent(email)}</p>
               ) : null}
 
               {passwordStage !== 'reset' && passwordStage !== 'reset_sent' ? (
                 <>
-                  <label htmlFor="auth-password">密码</label>
+                  <label htmlFor="auth-password">{t.passwordLabel}</label>
                   <input
                     id="auth-password"
                     type="password"
@@ -346,7 +433,7 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
 
               {passwordStage === 'signup' ? (
                 <>
-                  <label htmlFor="auth-password2">确认密码</label>
+                  <label htmlFor="auth-password2">{t.password2Label}</label>
                   <input
                     id="auth-password2"
                     type="password"
@@ -360,22 +447,22 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
 
               {passwordStage === 'signin' ? (
                 <button type="submit" className="button" disabled={!passwordEnabled || busy || !email.trim() || !password}>
-                  登录
+                  {t.signIn}
                 </button>
               ) : null}
               {passwordStage === 'signup' ? (
                 <button type="submit" className="button" disabled={!passwordEnabled || busy || !email.trim() || !password || !password2}>
-                  注册并登录
+                  {t.signUpAndSignIn}
                 </button>
               ) : null}
               {passwordStage === 'signup_sent' ? (
                 <button type="button" className="button" onClick={() => { setPasswordStage('signin'); setError(''); }}>
-                  返回登录
+                  {t.backToSignIn}
                 </button>
               ) : null}
               {passwordStage === 'reset' ? (
                 <button type="submit" className="button" disabled={!passwordEnabled || busy || !email.trim()}>
-                  发送重置邮件
+                  {t.sendReset}
                 </button>
               ) : null}
             </form>
@@ -383,20 +470,20 @@ export default function AuthDialog({ api = defaultAuth, onClose }) {
             <div className="auth-dialog__switches">
               {passwordStage !== 'signup' ? (
                 <button type="button" className="text-link" onClick={() => { setPasswordStage('signup'); setError(''); }}>
-                  没有账号？去注册
+                  {t.noAccount}
                 </button>
               ) : (
                 <button type="button" className="text-link" onClick={() => { setPasswordStage('signin'); setError(''); }}>
-                  已有账号？去登录
+                  {t.hasAccount}
                 </button>
               )}
               {passwordStage !== 'reset' ? (
                 <button type="button" className="text-link" onClick={() => { setPasswordStage('reset'); setError(''); }}>
-                  忘记密码
+                  {t.forgotPassword}
                 </button>
               ) : (
                 <button type="button" className="text-link" onClick={() => { setPasswordStage('signin'); setError(''); }}>
-                  返回密码登录
+                  {t.backToPassword}
                 </button>
               )}
             </div>

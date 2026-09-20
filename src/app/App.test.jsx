@@ -28,6 +28,7 @@ describe('App', () => {
   });
 
   test('工作台在会话和生成服务未配置时安全降级', async () => {
+    window.localStorage.setItem('gpt-image-gallery-locale', 'zh-CN');
     renderAt('/workspace');
 
     expect(await screen.findByRole('heading', { name: '创作工作台' })).toBeInTheDocument();

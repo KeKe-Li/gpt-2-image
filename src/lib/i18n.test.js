@@ -37,6 +37,12 @@ describe('pathWithLocale', () => {
   test('替换已有的语言前缀而非叠加', () => {
     expect(pathWithLocale('en', '/zh-CN/cases')).toBe('/en/cases');
   });
+
+  test('保留 query 与 hash，并正确处理语言根路径', () => {
+    expect(pathWithLocale('en', '/zh-CN?case=1')).toBe('/en?case=1');
+    expect(pathWithLocale('en', '/zh-CN#featured')).toBe('/en#featured');
+    expect(pathWithLocale('en', '/zh-CN/cases?case=1#prompt')).toBe('/en/cases?case=1#prompt');
+  });
 });
 
 describe('resolveLocale 优先级', () => {
