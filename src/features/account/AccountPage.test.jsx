@@ -160,10 +160,37 @@ describe('AccountPage', () => {
       </SessionProvider>
     );
 
-    expect(await screen.findByRole('button', { name: '退出登录' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: '退出登录' }));
+    expect(await screen.findByRole('button', { name: 'Sign out' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
 
     await waitFor(() => expect(authApi.signOut).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(assignSpy).toHaveBeenCalledWith('/en'));
+  });
+
+  test('英文 locale 下未配置与未登录状态显示英文文案', async () => {
+    window.localStorage.setItem('gpt-image-gallery-locale', 'en');
+
+    const unconfiguredApi = { capability: { configured: false }, signOut: vi.fn() };
+    const { unmount } = renderAccountPage(
+      <SessionProvider sessionAdapter={{ restore: () => Promise.resolve({ user: null, accessToken: '' }) }}>
+        <AccountPage api={unconfiguredApi} accountClient={{ fetchAccount: vi.fn(), fetchFavorites: vi.fn(), removeFavorite: vi.fn() }} />
+      </SessionProvider>
+    );
+
+    expect(await screen.findByRole('heading', { name: 'Account center' })).toBeInTheDocument();
+    expect(screen.getByText('Account service is not configured, so sign-in is unavailable.')).toBeInTheDocument();
+    expect(screen.getByText('You can still browse all public cases and copy original prompts.')).toBeInTheDocument();
+
+    unmount();
+
+    const configuredApi = { capability: { configured: true }, signOut: vi.fn() };
+    renderAccountPage(
+      <SessionProvider sessionAdapter={{ restore: () => Promise.resolve({ user: null, accessToken: '' }) }}>
+        <AccountPage api={configuredApi} accountClient={{ fetchAccount: vi.fn(), fetchFavorites: vi.fn(), removeFavorite: vi.fn() }} />
+      </SessionProvider>
+    );
+
+    expect(await screen.findByText('Sign in to save cases, manage history, and update your account.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sign in / Sign up' })).toBeInTheDocument();
   });
 });
