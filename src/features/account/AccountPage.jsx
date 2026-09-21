@@ -15,10 +15,72 @@ const defaultAccountClient = {
   removeFavorite: (caseId, options) => removeFavorite(caseId, options)
 };
 
+const copy = {
+  'zh-CN': {
+    title: '账户中心',
+    unconfigured: '账户服务尚未配置，登录暂不可用。',
+    stillBrowse: '你仍可浏览全部公开案例并复制原始提示词。',
+    loginHint: '登录后可收藏案例、管理生成记录与账户信息。',
+    loginAction: '登录 / 注册',
+    accountInfo: '账户信息',
+    email: '邮箱',
+    nickname: '昵称',
+    nicknamePlaceholder: '设置一个展示昵称',
+    saving: '保存中…',
+    save: '保存',
+    creditBalance: '积分余额',
+    totalGenerations: '累计生成',
+    membershipStatus: '会员状态',
+    favorites: '我的收藏',
+    noFavoritesPrefix: '还没有收藏案例，去 ',
+    noFavoritesLink: '案例库',
+    noFavoritesSuffix: ' 挑一个吧。',
+    removeFavorite: '取消收藏',
+    signOut: '退出登录',
+    errors: {
+      favoritesLoad: '收藏加载失败。',
+      accountLoad: '账户资料加载失败。',
+      removeFavorite: '取消收藏失败，请重试。',
+      signOut: '退出登录失败，请重试。',
+      profileSave: '资料更新失败，请重试。'
+    }
+  },
+  en: {
+    title: 'Account center',
+    unconfigured: 'Account service is not configured, so sign-in is unavailable.',
+    stillBrowse: 'You can still browse all public cases and copy original prompts.',
+    loginHint: 'Sign in to save cases, manage history, and update your account.',
+    loginAction: 'Sign in / Sign up',
+    accountInfo: 'Account details',
+    email: 'Email',
+    nickname: 'Display name',
+    nicknamePlaceholder: 'Set a display name',
+    saving: 'Saving…',
+    save: 'Save',
+    creditBalance: 'Credit balance',
+    totalGenerations: 'Total generations',
+    membershipStatus: 'Membership status',
+    favorites: 'Saved cases',
+    noFavoritesPrefix: 'No saved cases yet. Visit the ',
+    noFavoritesLink: 'case library',
+    noFavoritesSuffix: ' to pick one.',
+    removeFavorite: 'Remove',
+    signOut: 'Sign out',
+    errors: {
+      favoritesLoad: 'Failed to load saved cases.',
+      accountLoad: 'Failed to load account details.',
+      removeFavorite: 'Failed to remove the saved case. Please retry.',
+      signOut: 'Failed to sign out. Please retry.',
+      profileSave: 'Failed to update your profile. Please retry.'
+    }
+  }
+};
+
 // 账户中心：匿名/未配置时给出登录入口，登录后展示资料、收藏与登出。
 export default function AccountPage({ api = defaultAuth, accountClient = defaultAccountClient }) {
   const session = useSession();
-  const { localizedPath } = useLocale();
+  const { locale, localizedPath } = useLocale();
+  const t = copy[locale] || copy['zh-CN'];
   const [showLogin, setShowLogin] = useState(false);
   const [accountState, setAccountState] = useState(() => createSessionOwnedState('', null));
   const [accountError, setAccountError] = useState('');
@@ -51,7 +113,7 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
       })
       .catch((requestError) => {
         if (!controller.signal.aborted && requestError?.name !== 'AbortError') {
-          setFavError('收藏加载失败。');
+          setFavError(t.errors.favoritesLoad);
         }
       });
 
@@ -65,12 +127,12 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
       })
       .catch((requestError) => {
         if (!controller.signal.aborted && requestError?.name !== 'AbortError') {
-          setAccountError('账户资料加载失败。');
+          setAccountError(t.errors.accountLoad);
         }
       });
 
     return () => controller.abort();
-  }, [accountClient, session.accessToken, session.status, sessionKey, user?.id]);
+  }, [accountClient, session.accessToken, session.status, sessionKey, t.errors.accountLoad, t.errors.favoritesLoad, user?.id]);
 
   useEffect(() => {
     setDisplayName(account?.fullName || '');
@@ -86,7 +148,7 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
       await accountClient.removeFavorite(caseId, { accessToken: session.accessToken });
     } catch {
       setFavoritesState(createSessionOwnedState(sessionKey, previous)); // 失败回滚
-      setFavError('取消收藏失败，请重试。');
+      setFavError(t.errors.removeFavorite);
     }
   };
 
@@ -95,7 +157,7 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
       await api.signOut();
       window.location.assign(localizedPath('/'));
     } catch {
-      setFavError('退出登录失败，请重试。');
+      setFavError(t.errors.signOut);
     }
   };
 
@@ -112,7 +174,7 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
       }
       setAccountState(createSessionOwnedState(sessionKey, result.user));
     } catch {
-      setAccountError('资料更新失败，请重试。');
+      setAccountError(t.errors.profileSave);
     } finally {
       setSaving(false);
     }
@@ -121,9 +183,9 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
   if (!configured) {
     return (
       <section className="account-page">
-        <h1>账户中心</h1>
-        <p className="content-notice" role="status">账户服务尚未配置，登录暂不可用。</p>
-        <p>你仍可浏览全部公开案例并复制原始提示词。</p>
+        <h1>{t.title}</h1>
+        <p className="content-notice" role="status">{t.unconfigured}</p>
+        <p>{t.stillBrowse}</p>
       </section>
     );
   }
@@ -131,9 +193,9 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
   if (!user) {
     return (
       <section className="account-page">
-        <h1>账户中心</h1>
-        <p>登录后可收藏案例、管理生成记录与账户信息。</p>
-        <button type="button" className="button" onClick={() => setShowLogin(true)}>登录 / 注册</button>
+        <h1>{t.title}</h1>
+        <p>{t.loginHint}</p>
+        <button type="button" className="button" onClick={() => setShowLogin(true)}>{t.loginAction}</button>
         {showLogin ? <AuthDialog onClose={() => setShowLogin(false)} /> : null}
       </section>
     );
@@ -141,47 +203,47 @@ export default function AccountPage({ api = defaultAuth, accountClient = default
 
   return (
     <section className="account-page">
-      <h1>账户中心</h1>
+      <h1>{t.title}</h1>
 
       <div className="account-section">
-        <h2>账户信息</h2>
+        <h2>{t.accountInfo}</h2>
         {accountError ? <p className="auth-dialog__error" role="alert">{accountError}</p> : null}
-        <p>邮箱：{account?.email || user.email || '—'}</p>
+        <p>{t.email}：{account?.email || user.email || '—'}</p>
         <form className="account-profile" onSubmit={handleSaveProfile}>
-          <label htmlFor="account-fullname">昵称</label>
+          <label htmlFor="account-fullname">{t.nickname}</label>
           <input
             id="account-fullname"
             value={displayName}
-            placeholder="设置一个展示昵称"
+            placeholder={t.nicknamePlaceholder}
             onChange={(event) => setDisplayName(event.target.value)}
           />
           <button type="submit" className="button button--small" disabled={saving}>
-            {saving ? '保存中…' : '保存'}
+            {saving ? t.saving : t.save}
           </button>
         </form>
-        <p>积分余额：{account?.creditBalance ?? '—'}</p>
-        <p>累计生成：{account?.usage?.totalGenerations ?? '—'}</p>
-        <p>会员状态：{account?.membership?.status || '—'}</p>
+        <p>{t.creditBalance}：{account?.creditBalance ?? '—'}</p>
+        <p>{t.totalGenerations}：{account?.usage?.totalGenerations ?? '—'}</p>
+        <p>{t.membershipStatus}：{account?.membership?.status || '—'}</p>
       </div>
 
       <div className="account-section">
-        <h2>我的收藏</h2>
+        <h2>{t.favorites}</h2>
         {favError ? <p className="auth-dialog__error" role="alert">{favError}</p> : null}
         {favorites.length === 0 ? (
-          <p>还没有收藏案例，去 <Link to={localizedPath('/cases')}>案例库</Link> 挑一个吧。</p>
+          <p>{t.noFavoritesPrefix}<Link to={localizedPath('/cases')}>{t.noFavoritesLink}</Link>{t.noFavoritesSuffix}</p>
         ) : (
           <ul className="account-favorites">
             {favorites.map((caseId) => (
               <li key={caseId}>
                 <Link to={`${localizedPath('/cases')}?case=${caseId}`}>案例 {caseId}</Link>
-                <button type="button" className="text-link" onClick={() => handleRemove(caseId)}>取消收藏</button>
+                <button type="button" className="text-link" onClick={() => handleRemove(caseId)}>{t.removeFavorite}</button>
               </li>
             ))}
           </ul>
         )}
       </div>
 
-      <button type="button" className="button button--quiet" onClick={handleSignOut}>退出登录</button>
+      <button type="button" className="button button--quiet" onClick={handleSignOut}>{t.signOut}</button>
     </section>
   );
 }

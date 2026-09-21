@@ -62,6 +62,7 @@ describe('App', () => {
   });
 
   test('管理员路由通过权限边界拒绝匿名访问', async () => {
+    window.localStorage.setItem('gpt-image-gallery-locale', 'zh-CN');
     renderAt('/admin');
 
     expect(await screen.findByRole('heading', { name: '需要管理员权限' })).toBeInTheDocument();

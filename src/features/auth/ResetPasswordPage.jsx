@@ -47,7 +47,7 @@ export default function ResetPasswordPage({ api = defaultAuth, locale = '', redi
   useEffect(() => {
     if (!api?.capability?.configured) {
       setState('error');
-      setMessage(resolvedLocale === 'en' ? 'Auth is not configured.' : '登录服务尚未配置。');
+      setMessage(resolvedLocale === 'en' ? 'Authentication is not configured.' : '登录服务尚未配置。');
     }
   }, [api, resolvedLocale]);
 
