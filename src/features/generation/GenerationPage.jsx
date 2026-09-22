@@ -183,7 +183,6 @@ export default function GenerationPage({ api = defaultApi }) {
       setPromptLoadingCase(null);
     }
   }, [api]);
-
   if (!capability) {
     return (
       <section className="generation-page" aria-labelledby="generation-title">
