@@ -45,6 +45,10 @@
   color: var(--color-ink-soft);
 }
 
+.generation-form__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; justify-content: flex-end; }
+.prompt-inspection { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-small); background: var(--color-paper-raised); }
+.prompt-inspection strong { flex-basis: 100%; }
+
 .generation-error {
   font-size: var(--text-status);
   color: var(--color-accent-deep);

@@ -2,7 +2,8 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   fetchGenerationCapability,
   getAccessToken,
-  submitGeneration
+  submitGeneration,
+  inspectPrompt
 } from './generation-api';
 
 function jsonResponse(body, ok = true, status = 200) {
@@ -57,5 +58,22 @@ describe('submitGeneration', () => {
     await expect(
       submitGeneration({ caseId: 5, prompt: 'hi', accessToken: '' }, { submitImpl: vi.fn() })
     ).rejects.toMatchObject({ loginRequired: true });
+  });
+});
+
+describe('inspectPrompt', () => {
+  test('调用服务端体检接口并返回结构化结果', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({
+      ok: true,
+      inspection: { category: 'poster', completeness: 3, needsReference: false }
+    }));
+    const result = await inspectPrompt('a poster', { fetchImpl });
+    expect(fetchImpl).toHaveBeenCalledWith('/api/prompt/inspect', expect.objectContaining({ method: 'POST' }));
+    expect(result.category).toBe('poster');
+  });
+
+  test('服务不可用时抛出可识别错误', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ ok: false, error: 'INSPECTION_FAILED' }, false, 502));
+    await expect(inspectPrompt('a prompt', { fetchImpl })).rejects.toMatchObject({ code: 'INSPECTION_FAILED', status: 502 });
   });
 });
