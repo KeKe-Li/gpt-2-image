@@ -8,6 +8,7 @@ import {
 import { supabase } from '../../supabaseClient';
 
 const CAPABILITY_ENDPOINT = '/api/generate-image';
+const INSPECTION_ENDPOINT = '/api/prompt/inspect';
 
 function resolveFetch(fetchImpl) {
   const doFetch = fetchImpl || (typeof fetch === 'function' ? fetch : null);
@@ -47,6 +48,22 @@ export async function fetchGenerationCapability({ fetchImpl } = {}) {
     return { configured: false, authRequired: true, freeUsed: false };
   }
   throw new GenerationError(body.error || '生成能力探测失败。', { code: body.error });
+}
+
+export async function inspectPrompt(prompt, { fetchImpl } = {}) {
+  const doFetch = resolveFetch(fetchImpl);
+  const response = await doFetch(INSPECTION_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok || !body?.ok) {
+    const error = new GenerationError(body?.error || 'INSPECTION_FAILED', { code: body?.error });
+    error.status = response.status;
+    throw error;
+  }
+  return body.inspection;
 }
 
 /**
