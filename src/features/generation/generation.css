@@ -48,6 +48,14 @@
 .generation-form__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; justify-content: flex-end; }
 .prompt-inspection { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-small); background: var(--color-paper-raised); }
 .prompt-inspection strong { flex-basis: 100%; }
+.prompt-recommendations { margin-top: var(--space-4); }
+.prompt-recommendations h2 { margin: 0 0 var(--space-2); font-size: var(--text-subheading); }
+.prompt-recommendations__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.prompt-recommendation { overflow: hidden; border: 1px solid var(--color-line); border-radius: var(--radius-small); background: var(--color-paper-raised); }
+.prompt-recommendation img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.prompt-recommendation div { display: grid; gap: var(--space-2); padding: var(--space-2); }
+.prompt-recommendation strong { display: block; font-size: var(--text-caption); }
+@media (max-width: 42rem) { .prompt-recommendations__grid { grid-template-columns: 1fr; } }
 
 .generation-error {
   font-size: var(--text-status);

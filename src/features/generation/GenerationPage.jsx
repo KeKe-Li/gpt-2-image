@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useSession } from '../auth/SessionProvider';
 import AuthDialog from '../auth/AuthDialog';
 import { useLocale } from '../i18n/LocaleProvider';
+import { fetchCasePrompt, fetchGalleryData } from '../gallery/gallery-data';
 import {
   fetchGenerationCapability,
   getAccessToken,
@@ -11,6 +12,7 @@ import {
   inspectPrompt
 } from './generation-api';
 import { APIMART_DEFAULT_PRICE_USD, APIMART_MAX_PROMPT_LENGTH } from '../../../shared/apimart';
+import { recommendCases } from './prompt-recommendations';
 import './generation.css';
 
 // 默认 API 绑定：便于测试时整体注入替身。
@@ -19,7 +21,9 @@ const defaultApi = {
   getToken: () => getAccessToken(),
   submit: (input) => submitGeneration(input),
   poll: (input) => pollGeneration(input),
-  inspect: (prompt) => inspectPrompt(prompt)
+  inspect: (prompt) => inspectPrompt(prompt),
+  loadCases: () => fetchGalleryData(),
+  loadPrompt: (caseId) => fetchCasePrompt(caseId)
 };
 
 const copy = {
@@ -46,7 +50,8 @@ const copy = {
     polling: '正在生成，请稍候…',
     resultAlt: '生成结果',
     resultCaption: (cost) => `本次生成${cost != null ? ` · 成本约 $${Number(cost).toFixed(4)}` : ''}`,
-    inspect: '智能体检', inspecting: '分析中…', inspectUnavailable: '暂时无法完成体检，请直接生成。', inspectionTitle: '提示词体检', category: '方向', completeness: '完整度', reference: '建议参考图', yes: '建议', no: '不需要'
+    inspect: '智能体检', inspecting: '分析中…', inspectUnavailable: '暂时无法完成体检，请直接生成。', inspectionTitle: '提示词体检', category: '方向', completeness: '完整度', reference: '建议参考图', yes: '建议', no: '不需要',
+    recommendations: '相近案例', usePrompt: '带入提示词', noRecommendations: '暂时没有找到相近案例。'
   },
   en: {
     errorMessages: {
@@ -71,7 +76,8 @@ const copy = {
     polling: 'Generating, please wait…',
     resultAlt: 'Generated result',
     resultCaption: (cost) => `This generation${cost != null ? ` · Cost about $${Number(cost).toFixed(4)}` : ''}`,
-    inspect: 'Prompt check', inspecting: 'Analyzing…', inspectUnavailable: 'Prompt check is unavailable. You can still generate.', inspectionTitle: 'Prompt check', category: 'Direction', completeness: 'Completeness', reference: 'Reference image', yes: 'Recommended', no: 'Not needed'
+    inspect: 'Prompt check', inspecting: 'Analyzing…', inspectUnavailable: 'Prompt check is unavailable. You can still generate.', inspectionTitle: 'Prompt check', category: 'Direction', completeness: 'Completeness', reference: 'Reference image', yes: 'Recommended', no: 'Not needed',
+    recommendations: 'Related cases', usePrompt: 'Use prompt', noRecommendations: 'No close cases found yet.'
   }
 };
 
@@ -95,6 +101,9 @@ export default function GenerationPage({ api = defaultApi }) {
   const [inspection, setInspection] = useState(null);
   const [inspectionBusy, setInspectionBusy] = useState(false);
   const [inspectionError, setInspectionError] = useState(false);
+  const [recommendations, setRecommendations] = useState([]);
+  const [promptLoadingCase, setPromptLoadingCase] = useState(null);
+  const inspectionRequestRef = useRef(0);
   const pollAbortRef = useRef(null);
 
   useEffect(() => () => pollAbortRef.current?.abort(), []);
@@ -147,11 +156,33 @@ export default function GenerationPage({ api = defaultApi }) {
     if (!trimmed || inspectionBusy) return;
     setInspectionBusy(true);
     setInspectionError(false);
-    try { setInspection(await api.inspect(trimmed)); }
-    catch { setInspection(null); setInspectionError(true); }
+    const requestId = ++inspectionRequestRef.current;
+    try {
+      const [nextInspection, gallery] = await Promise.all([api.inspect(trimmed), api.loadCases()]);
+      if (requestId !== inspectionRequestRef.current) return;
+      setInspection(nextInspection);
+      setRecommendations(recommendCases(gallery?.cases, nextInspection));
+    } catch {
+      if (requestId === inspectionRequestRef.current) {
+        setInspection(null);
+        setRecommendations([]);
+        setInspectionError(true);
+      }
+    }
     finally { setInspectionBusy(false); }
   }, [api, inspectionBusy, prompt]);
 
+  const useRecommendedPrompt = useCallback(async (item) => {
+    setPromptLoadingCase(item.id);
+    try {
+      const result = await api.loadPrompt(item.id);
+      setPrompt(result?.prompt || item.prompt || item.promptPreview || '');
+    } catch {
+      setPrompt(item.prompt || item.promptPreview || '');
+    } finally {
+      setPromptLoadingCase(null);
+    }
+  }, [api]);
   if (!capability) {
     return (
       <section className="generation-page" aria-labelledby="generation-title">
@@ -217,6 +248,18 @@ export default function GenerationPage({ api = defaultApi }) {
         <span>{t.completeness}: {inspection.completeness ?? '—'}/4</span>
         <span>{t.reference}: {inspection.needsReference == null ? '—' : inspection.needsReference ? t.yes : t.no}</span>
       </aside> : null}
+      {inspection ? <section className="prompt-recommendations" aria-labelledby="prompt-recommendations-title">
+        <h2 id="prompt-recommendations-title">{t.recommendations}</h2>
+        {recommendations.length ? <div className="prompt-recommendations__grid">
+          {recommendations.map((item) => <article className="prompt-recommendation" key={item.id}>
+            <img src={item.image} alt={item.imageAlt || item.title} loading="lazy" />
+            <div>
+              <strong>{item.title}</strong>
+              <button type="button" className="button button--small button--quiet" onClick={() => useRecommendedPrompt(item)} disabled={promptLoadingCase === item.id}>{promptLoadingCase === item.id ? t.inspecting : t.usePrompt}</button>
+            </div>
+          </article>)}
+        </div> : <p>{t.noRecommendations}</p>}
+      </section> : null}
 
       {phase === 'polling' ? <p role="status">{t.polling}</p> : null}
       {error ? <p className="generation-error" role="alert">{error}</p> : null}
