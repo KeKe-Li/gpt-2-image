@@ -117,4 +117,22 @@ describe('GenerationPage', () => {
     pollDeferred.resolve({ status: 'completed', image: '/images/case1.jpg', cost: 0.01 });
     await waitFor(() => expect(screen.getByRole('img', { name: 'Generated result' })).toBeInTheDocument());
   });
+
+  test('修改提示词后清除旧体检和推荐结果', async () => {
+    const api = makeApi({
+      inspect: vi.fn().mockResolvedValue({ category: 'poster', completeness: 3, needsReference: false }),
+      loadCases: vi.fn().mockResolvedValue({ cases: [{ id: 2, title: '海报案例', category: 'Posters & Typography', image: '/images/case2.jpg' }] }),
+      loadPrompt: vi.fn().mockResolvedValue({ prompt: '完整案例提示词' })
+    });
+    renderWithSession(<GenerationPage api={api} />, { user: { id: 'u1' } });
+    const textarea = await screen.findByLabelText('提示词');
+    fireEvent.change(textarea, { target: { value: '一张海报' } });
+    fireEvent.click(screen.getByRole('button', { name: '智能体检' }));
+    expect(await screen.findByText('提示词体检')).toBeInTheDocument();
+    expect(screen.getByText('相近案例')).toBeInTheDocument();
+
+    fireEvent.change(textarea, { target: { value: '一张摄影作品' } });
+    expect(screen.queryByText('提示词体检')).not.toBeInTheDocument();
+    expect(screen.queryByText('相近案例')).not.toBeInTheDocument();
+  });
 });

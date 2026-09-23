@@ -183,6 +183,13 @@ export default function GenerationPage({ api = defaultApi }) {
       setPromptLoadingCase(null);
     }
   }, [api]);
+
+  const handlePromptChange = useCallback((event) => {
+    setPrompt(event.target.value);
+    setInspection(null);
+    setRecommendations([]);
+    setInspectionError(false);
+  }, []);
   if (!capability) {
     return (
       <section className="generation-page" aria-labelledby="generation-title">
@@ -228,7 +235,7 @@ export default function GenerationPage({ api = defaultApi }) {
           maxLength={APIMART_MAX_PROMPT_LENGTH}
           rows={6}
           placeholder={t.promptPlaceholder}
-          onChange={(event) => setPrompt(event.target.value)}
+          onChange={handlePromptChange}
         />
         <div className="generation-form__meta">
           <span>{t.estimateCost} · {prompt.length}/{APIMART_MAX_PROMPT_LENGTH}</span>
@@ -242,13 +249,13 @@ export default function GenerationPage({ api = defaultApi }) {
       </form>
 
       {inspectionError ? <p className="generation-error" role="status">{t.inspectUnavailable}</p> : null}
-      {inspection ? <aside className="prompt-inspection" aria-label={t.inspectionTitle}>
+      {inspection ? <aside className="prompt-inspection" aria-label={t.inspectionTitle} aria-live="polite">
         <strong>{t.inspectionTitle}</strong>
         <span>{t.category}: {inspection.category}</span>
         <span>{t.completeness}: {inspection.completeness ?? '—'}/4</span>
         <span>{t.reference}: {inspection.needsReference == null ? '—' : inspection.needsReference ? t.yes : t.no}</span>
       </aside> : null}
-      {inspection ? <section className="prompt-recommendations" aria-labelledby="prompt-recommendations-title">
+      {inspection ? <section className="prompt-recommendations" aria-labelledby="prompt-recommendations-title" aria-live="polite">
         <h2 id="prompt-recommendations-title">{t.recommendations}</h2>
         {recommendations.length ? <div className="prompt-recommendations__grid">
           {recommendations.map((item) => <article className="prompt-recommendation" key={item.id}>
