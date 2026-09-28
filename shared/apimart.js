@@ -4,6 +4,17 @@ export const APIMART_DEFAULT_PRICE_USD = 0.010625;
 export const APIMART_PRICE_SNAPSHOT_DATE = '2026-08-28';
 export const APIMART_MAX_PROMPT_LENGTH = 10_000;
 
+/**
+ * 将站点 locale（如 zh-CN、en-US）归一化为 APIMart 接受的语言码。
+ * APIMart 只接受 zh/en，而前端路由使用完整 locale。
+ */
+export function normalizeApimartLanguage(language, fallback = 'en') {
+  const normalized = String(language || '').trim().toLowerCase();
+  if (normalized === 'zh' || normalized.startsWith('zh-') || normalized.startsWith('zh_')) return 'zh';
+  if (normalized === 'en' || normalized.startsWith('en-') || normalized.startsWith('en_')) return 'en';
+  return fallback === 'zh' ? 'zh' : 'en';
+}
+
 export function buildApimartGenerationPayload(prompt, options = {}) {
   const payload = {
     model: APIMART_MODEL,
@@ -14,7 +25,7 @@ export function buildApimartGenerationPayload(prompt, options = {}) {
   };
 
   if (options.webhook) payload.webhook = options.webhook;
-  if (options.language) payload.language = options.language === 'zh' ? 'zh' : 'en';
+  if (options.language) payload.language = normalizeApimartLanguage(options.language);
   return payload;
 }
 

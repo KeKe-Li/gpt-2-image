@@ -6,6 +6,7 @@ import {
   isTerminalApimartStatus,
   isValidApimartTaskId,
   normalizeApimartTask,
+  normalizeApimartLanguage,
   retryAfterMilliseconds
 } from '../shared/apimart.js';
 
@@ -33,7 +34,9 @@ function readObject(key, storage) {
 
 function writeObject(key, value, storage) {
   try {
-    browserStorage(storage)?.setItem(key, JSON.stringify(value));
+    const target = browserStorage(storage);
+    if (!target?.setItem) return false;
+    target.setItem(key, JSON.stringify(value));
     return true;
   } catch {
     return false;
@@ -52,7 +55,9 @@ export function saveStoredApimartKey(apiKey, storage) {
   const normalized = String(apiKey || '').trim();
   if (!normalized || normalized.length > 512 || /[\r\n]/.test(normalized)) return false;
   try {
-    browserStorage(storage)?.setItem(APIMART_KEY_STORAGE_KEY, normalized);
+    const target = browserStorage(storage);
+    if (!target?.setItem) return false;
+    target.setItem(APIMART_KEY_STORAGE_KEY, normalized);
     return true;
   } catch {
     return false;
@@ -128,7 +133,7 @@ export async function fetchPersonalTask(taskId, apiKey, language, fetchImpl = fe
     error.code = error.message;
     throw error;
   }
-  const query = new URLSearchParams({ language: language === 'zh' ? 'zh' : 'en' });
+  const query = new URLSearchParams({ language: normalizeApimartLanguage(language) });
   const response = await fetchImpl(`${APIMART_API_BASE_URL}/v1/tasks/${encodeURIComponent(taskId)}?${query}`, {
     method: 'GET',
     headers: {
@@ -175,7 +180,7 @@ export async function fetchPlatformTask(taskId, accessToken, language, fetchImpl
     error.code = error.message;
     throw error;
   }
-  const query = new URLSearchParams({ taskId, language: language === 'zh' ? 'zh' : 'en' });
+  const query = new URLSearchParams({ taskId, language: normalizeApimartLanguage(language) });
   const response = await fetchImpl(`/api/generation/status?${query}`, {
     method: 'GET',
     headers: {
@@ -198,13 +203,18 @@ export async function fetchPlatformTask(taskId, accessToken, language, fetchImpl
 
 function wait(milliseconds, signal) {
   return new Promise((resolve, reject) => {
+    let timeout;
     function handleAbort() {
       globalThis.clearTimeout(timeout);
       const error = new Error('APIMART_POLL_ABORTED');
       error.code = error.message;
       reject(error);
     }
-    const timeout = globalThis.setTimeout(() => {
+    if (signal?.aborted) {
+      handleAbort();
+      return;
+    }
+    timeout = globalThis.setTimeout(() => {
       signal?.removeEventListener('abort', handleAbort);
       resolve();
     }, milliseconds);
@@ -242,6 +252,11 @@ export async function pollApimartTask(fetchTask, options = {}) {
       await waitImpl(intervalMs, signal);
     } catch (error) {
       if (error?.code !== 'APIMART_RATE_LIMITED') throw error;
+      if (signal?.aborted) {
+        const abortError = new Error('APIMART_POLL_ABORTED');
+        abortError.code = abortError.message;
+        throw abortError;
+      }
       await waitImpl(error.retryAfterMs || intervalMs, signal);
     }
   }
