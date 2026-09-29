@@ -8,10 +8,20 @@ import {
   buildApimartGenerationPayload,
   extractApimartTaskId,
   normalizeApimartExpiry,
+  normalizeApimartLanguage,
   normalizeApimartTask,
   parseApimartPricing,
   retryAfterMilliseconds
 } from './apimart.js';
+
+test('locale language codes are normalized for APIMart', () => {
+  assert.equal(normalizeApimartLanguage('zh-CN'), 'zh');
+  assert.equal(normalizeApimartLanguage('zh_cn'), 'zh');
+  assert.equal(normalizeApimartLanguage('en-US'), 'en');
+  assert.equal(normalizeApimartLanguage('unknown'), 'en');
+  assert.equal(normalizeApimartLanguage('unknown', 'zh'), 'zh');
+  assert.equal(buildApimartGenerationPayload('画一只狐狸', { language: 'zh-CN' }).language, 'zh');
+});
 
 test('generation payload locks GPT-Image-2 to one 1K square image', () => {
   assert.deepEqual(buildApimartGenerationPayload('  draw a fox  ', {

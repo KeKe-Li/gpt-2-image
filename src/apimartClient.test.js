@@ -42,6 +42,11 @@ test('personal key stays in browser storage and is displayed only as a suffix ma
   assert.equal(getStoredApimartKey(storage), '');
 });
 
+test('storage writes report unavailable storage instead of claiming success', () => {
+  assert.equal(saveStoredApimartKey('apimart_secret_12345678', null), false);
+  assert.equal(savePendingGeneration(42, { taskId: 'task_abcdefgh' }, null), false);
+});
+
 test('pending tasks persist without an API key and expired results are removed', () => {
   const storage = new MemoryStorage();
   savePendingGeneration(42, {
@@ -103,6 +108,19 @@ test('platform submission contains only site auth and generation fields', async 
   assert.equal(JSON.stringify(calls[0]).includes('personal-key'), false);
 });
 
+test('platform task polling preserves the localized language code', async () => {
+  const calls = [];
+  const { fetchPlatformTask } = await import('./apimartClient.js');
+  await fetchPlatformTask('task_abcdefgh', 'site-session-token', 'zh-CN', async (url) => {
+    calls.push(url);
+    return new Response(JSON.stringify({ ok: true, status: 'completed', taskId: 'task_abcdefgh' }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' }
+    });
+  });
+  assert.match(calls[0], /language=zh/);
+});
+
 test('polling stops on completion and honors Retry-After waits', async () => {
   const waits = [];
   let calls = 0;
@@ -140,4 +158,28 @@ test('polling times out without submitting another task', async () => {
     { code: 'APIMART_TASK_TIMEOUT' }
   );
   assert.equal(fetchCount, 2);
+});
+
+test('aborted polling does not wait after a rate-limit response', async () => {
+  const controller = new AbortController();
+  const waits = [];
+  await assert.rejects(
+    pollApimartTask(async () => {
+      controller.abort();
+      const error = new Error('APIMART_RATE_LIMITED');
+      error.code = error.message;
+      throw error;
+    }, {
+      signal: controller.signal,
+      waitImpl: async (milliseconds, signal) => {
+        waits.push(milliseconds);
+        await new Promise((resolve, reject) => {
+          if (signal.aborted) reject(new Error('wait should not be called after abort'));
+          else resolve();
+        });
+      }
+    }),
+    { code: 'APIMART_POLL_ABORTED' }
+  );
+  assert.deepEqual(waits, []);
 });

@@ -7,6 +7,7 @@ import {
   extractApimartTaskId,
   isValidApimartTaskId,
   normalizeApimartTask,
+  normalizeApimartLanguage,
   parseApimartPricing,
   retryAfterMilliseconds
 } from '../../shared/apimart.js';
@@ -67,7 +68,7 @@ export async function getApimartTask({ apiKey, taskId, language = 'en', fetchImp
     throw error;
   }
   const { baseUrl } = getApimartConfig();
-  const query = new URLSearchParams({ language: language === 'zh' ? 'zh' : 'en' });
+  const query = new URLSearchParams({ language: normalizeApimartLanguage(language) });
   const response = await fetchImpl(`${baseUrl}/v1/tasks/${encodeURIComponent(taskId)}?${query}`, {
     method: 'GET',
     headers: {
