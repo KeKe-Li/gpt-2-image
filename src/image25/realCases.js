@@ -1,4 +1,4 @@
-import generatedCase532 from '../assets/image25-case532-run1.png';
+import generatedCase532 from '../assets/image25-case532-run1.jpg';
 import { additionalCases } from './additionalCases';
 
 export const realCases = [
