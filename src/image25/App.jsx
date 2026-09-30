@@ -116,10 +116,17 @@ export default function App() {
     selectCase((caseIndex + 1) % comparisonCases.length);
   }
 
-  function picture(label, side) {
+  function picture(label, side, { priority = false } = {}) {
     const generated = result && side === 'after';
     return <figure className={`image25-picture image25-picture-${side}`}>
-      <img src={generated ? result.image : item.image} alt={generated ? result.alt[language] : item.alt[language]} draggable="false" />
+      <img
+        src={generated ? result.image : item.image}
+        alt={generated ? result.alt[language] : item.alt[language]}
+        draggable="false"
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
+      />
       <figcaption className="image25-model-label">{label}</figcaption>
       {side === 'before' && sourceCaseId ? <a className="image25-demo-label image25-detail-link" href={`/?case=${sourceCaseId}`}>{t.viewDetails}<ArrowUpRight size={14} /></a> : <span className="image25-demo-label">{result ? (generated ? t.generated : t.original) : t.demo}</span>}
     </figure>;
@@ -156,8 +163,8 @@ export default function App() {
         <div className="image25-comparison-panel">
           <div className="image25-notice"><span><Info size={15} />{notice}</span><button type="button" className="image25-icon-button" onClick={() => setModal('images')} aria-label={t.enlarge} title={t.enlarge}><Expand size={17} /></button></div>
           <div className={`image25-canvas image25-canvas-${view}${result ? ' image25-canvas-real' : ''}`} style={{ '--split': `${position}%` }}>
-            {picture(beforeLabel, 'before')}
-            {picture(afterLabel, 'after')}
+            {picture(beforeLabel, 'before', { priority: true })}
+            {picture(afterLabel, 'after', { priority: true })}
             {view === 'slider' && <>
               <div className="image25-divider" aria-hidden="true"><span><ChevronsLeftRight size={24} /></span></div>
               <input className="image25-range" aria-label={t.sliderLabel} aria-valuetext={`${position}%`} type="range" min="0" max="100" value={position} onChange={event => setPosition(Number(event.target.value))} />
