@@ -1,4 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
+vi.mock('../../supabaseClient', () => ({
+  supabase: { auth: { getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'lazy-token' } } }) } }
+}));
 import {
   fetchGenerationCapability,
   getAccessToken,
@@ -40,6 +43,10 @@ describe('getAccessToken', () => {
     expect(await getAccessToken(null)).toBe('');
     const client = { auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null } }) } };
     expect(await getAccessToken(client)).toBe('');
+  });
+
+  test('未注入客户端时按需加载 Supabase 会话', async () => {
+    expect(await getAccessToken()).toBe('lazy-token');
   });
 });
 

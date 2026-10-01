@@ -1,4 +1,4 @@
-import mug from '../assets/image25-demo-mug.png';
+import mug from '../assets/image25-demo-mug.jpg';
 import { realCases } from './realCases';
 
 // Real recreations carry their own result image and generation record.

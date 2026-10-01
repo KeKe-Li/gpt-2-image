@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, ArrowUpRight, Check, ChevronDown, ChevronsLeftRight, Columns2, Copy, Expand, Info, Settings2, Sun, WandSparkles, X, Zap } from 'lucide-react';
 import { comparisonCases, modelDocs } from './cases';
-import hero from '../assets/image25-hero.png';
+import hero from '../assets/image25-hero.jpg';
 
 const text = {
   zh: {

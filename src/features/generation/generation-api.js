@@ -5,7 +5,6 @@ import {
   pollApimartTask,
   submitPlatformGeneration
 } from '../../apimartClient';
-import { supabase } from '../../supabaseClient';
 
 const CAPABILITY_ENDPOINT = '/api/generate-image';
 const INSPECTION_ENDPOINT = '/api/prompt/inspect';
@@ -69,7 +68,11 @@ export async function inspectPrompt(prompt, { fetchImpl } = {}) {
 /**
  * 从 Supabase 会话读取访问令牌。无会话时返回空字符串。
  */
-export async function getAccessToken(client = supabase) {
+export async function getAccessToken(client) {
+  if (client === undefined) {
+    const module = await import('../../supabaseClient');
+    client = module.supabase;
+  }
   if (!client?.auth?.getSession) return '';
   const { data } = await client.auth.getSession();
   return data?.session?.access_token || '';
